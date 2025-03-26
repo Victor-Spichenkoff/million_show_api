@@ -24,4 +24,13 @@ export class User {
 
   @CreateDateColumn()
   startDate: Date
+
+  @Column()
+  wrongPrize: number
+
+  @Column()
+  stopPrize: number
+
+  @Column()
+  correctPrize: number
 }
