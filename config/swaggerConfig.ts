@@ -11,5 +11,6 @@ const config = new DocumentBuilder()
 // colocar essa na main e receber o app
 export const configureSwagger = (app: INestApplication<any>) => {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('swagger', app, documentFactory);// endpoint dele
 }

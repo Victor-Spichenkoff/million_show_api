@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Historic } from './historic.model';
 
 @Entity()
-export class User {
+export class Question {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -28,4 +29,8 @@ export class User {
 
   @Column()
   level: 1 | 2 | 3
+
+
+  @ManyToMany(() => Historic, (h) => h.questions)
+  historic: Historic[]
 }

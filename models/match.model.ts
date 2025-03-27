@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { CreateDateColumn, Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
 import { States } from '../types/states';
-import { CreateDateColumn } from 'typeorm/browser';
+import { Historic } from './historic.model';
+import { User } from './user.model';
 
 @Entity()
-export class User {
+export class Match {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -33,4 +34,11 @@ export class User {
 
   @Column()
   correctPrize: number
+
+  // historic
+  @OneToMany(() => Historic, (h) => h.match)
+  historic: Historic
+
+  @OneToOne(()=> User, (u) => u.matchs)
+  user?: User
 }
