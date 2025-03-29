@@ -5,10 +5,6 @@ import {configDotenv} from "dotenv"
 
 configDotenv()
 
-console.log("=================")
-console.log(process.env.DB_PATH)
-console.log("=================")
-
 export const dbConfig: TypeOrmModuleOptions = {
 
   type: 'sqlite',
