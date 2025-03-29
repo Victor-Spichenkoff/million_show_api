@@ -6,10 +6,10 @@ export class Question {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ unique: true })
+  @Column()
   isBr: boolean = true
 
-  @Column({ length: 100 })
+  @Column({ length: 100, unique: true })
   label: string
 
   @Column({ length: 40 })

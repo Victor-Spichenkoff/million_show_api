@@ -1,3 +1,7 @@
+# TO DO
+- Implementar semi auth
+
+
 # Só criar historic ao terminar mesmo
 
 # Mudei para 1 - 4 para o answer index

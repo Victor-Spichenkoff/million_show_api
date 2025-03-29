@@ -5,34 +5,18 @@ import { SignupDto } from './dto/signup.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+    constructor(private readonly authService: AuthService) { }
 
+    // criar
+    @Post("/signup")
+    create(@Body() createAuthDto: SignupDto) {
+        return this.authService.create(createAuthDto);
+    }
 
-
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-
-  // criar
-  @Post("/signup")
-  create(@Body() createAuthDto: SignupDto) {
-    return this.authService.create(createAuthDto);
-  }
-
-  @Post('/signin')
-  update(@Param('id') id: string, @Body() updateAuthDto: SignInDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
-  }
+    //logar
+    @Post('/signin')
+    async update(@Body() body: SignInDto) {
+        const user = await this.authService.validateUser(body.userName, body.password);
+        return this.authService.login(user);
+    }
 }

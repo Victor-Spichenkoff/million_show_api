@@ -5,12 +5,17 @@ const config = new DocumentBuilder()
   .setTitle('Cats example')
   .setDescription('The cats API description')
   .setVersion('1.0')
-  .addTag('cats')//melhor deixar sem
+  .addBearerAuth()
   .build();
 
 // colocar essa na main e receber o app
 export const configureSwagger = (app: INestApplication<any>) => {
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const documentFactory = () => SwaggerModule.createDocument(app, config)
 
-  SwaggerModule.setup('swagger', app, documentFactory);// endpoint dele
+  // endpoint dele == swagger
+  SwaggerModule.setup('swagger', app, documentFactory, {
+    swaggerOptions: {
+      persistAuthorization: true
+    }
+  })
 }

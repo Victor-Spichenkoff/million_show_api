@@ -1,44 +1,55 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { SignInDto } from './dto/signin.dto';
-import { SignupDto } from './dto/signup.dto';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
+import { SignInDto } from './dto/signin.dto'
+import { SignupDto } from './dto/signup.dto'
+import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../../models/user.model'
 import { hashPassword } from '../../../helpers/crypto'
+import { JwtService } from '@nestjs/jwt'
+import { UserService } from '../user/user.service'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectRepository(User) private readonly _ur: Repository<User>) { }
+    constructor(
+        @InjectRepository(User) private readonly _ur: Repository<User>,
+        private readonly jwtService: JwtService,
+        private readonly userService: UserService) { }
 
-  async create(createAuthDto: SignupDto) {
-    if (!createAuthDto.password) throw new BadRequestException("Inform a password")
+    async create(createAuthDto: SignupDto) {
+        if (!createAuthDto.password) throw new BadRequestException("Inform a password")
 
-    if (createAuthDto.password.length < 4) throw new BadRequestException("Passwrod must have at least 4 characteres")
+        createAuthDto.password = await hashPassword(createAuthDto.password)
 
-    createAuthDto.password = await hashPassword(createAuthDto.password)
+        try {
+            const finalUser = await this._ur.save(createAuthDto)
+            return finalUser.userName
+        } catch (error) {
+            if (error.code === "SQLITE_CONSTRAINT" || error.code === "23505")
+                throw new BadRequestException(`User with name '${createAuthDto.userName}' already exists`)
 
-    try {
-      const finalUser = await this._ur.save(createAuthDto)
-      return finalUser.userName
-    } catch(e) {
-      console.log(e)
-      throw new BadRequestException(`User with name "${createAuthDto.userName}" already exists`)
+            console.log(error)
+            throw new InternalServerErrorException("Something went wrong")
+        }
     }
-  }
 
-  async findAll() {
-    return await this._ur.find();
-  }
+    async login(user: User) {
+        const payload = { sub: user.id, userName: user.userName };
+        return {
+            ...user,
+            access_token: this.jwtService.sign(payload, {
+                expiresIn: 60_000 * 60 * 24
+            }),
+        }
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
 
-  update(id: number, updateAuthDto: SignInDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+    async validateUser(email: string, password: string): Promise<any> {
+        const user = await this.userService.finUserByUserName(email)
+        if (user && (await bcrypt.compare(password, user.password))) {
+            const { password, ...result } = user
+            return result
+        }
+        throw new UnauthorizedException('Invalid Creadentials')
+    }
 }
