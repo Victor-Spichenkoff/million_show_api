@@ -11,3 +11,7 @@
 
 # match
 - vai ter userId
+
+
+# To Insert basic questions (121)
+- Run ````yarn seed````, or ````npm run seed````

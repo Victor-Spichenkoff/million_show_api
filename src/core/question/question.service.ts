@@ -7,26 +7,33 @@ import { Question } from 'models/question.model';
 
 @Injectable()
 export class QuestionService {
-  constructor(@InjectRepository(Question) private readonly _qr: Repository<Question>) {}
-  
+    constructor(@InjectRepository(Question) private readonly _qr: Repository<Question>) { }
 
-  create(createQuestionDto: CreateQuestionDto) {
-    return 'This action adds a new question';
-  }
 
-  findAll() {
-    return this._qr.find()
-  }
+    async create(createQuestionDto: CreateQuestionDto) {
+        return await this._qr.save(createQuestionDto)
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
-  }
+    async findPaged(page = 0, skip = 10) {
+        return await this._qr.find({
+            skip: page * skip,
+            take: skip
+        })
+    }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
-  }
+    async findAll() {
+        return await this._qr.find()
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
-  }
+    async findOne(id: number) {
+        return await this._qr.findOneBy({ id })
+    }
+
+    async update(id: number, updateQuestionDto: UpdateQuestionDto) {
+        return await this._qr.update(id, updateQuestionDto)
+    }
+
+    async remove(id: number) {
+        return await this._qr.delete(id)
+    }
 }
