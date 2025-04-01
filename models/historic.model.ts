@@ -18,15 +18,14 @@ export class Historic {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
-  finalPrize: number
+  @Column({ default: 0 })
+  finalPrize: number = 0
 
-  @CreateDateColumn()
-  finishDate: Date
+  @Column({ default: 0 })
+  finishDate: number = 0
 
-  @Column()
-  finalState: States
-
+  @Column({ nullable: true, default: undefined })
+  finalState?: States = undefined
 
   // match id
   @OneToOne(()=> Match)

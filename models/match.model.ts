@@ -3,42 +3,41 @@ import { States } from '../types/states';
 import { Historic } from './historic.model';
 import { User } from './user.model';
 
+const helpStartCount = 2
+
 @Entity()
 export class Match {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  state: States;
+  @Column({ default: "playing" })
+  state: States = "playing"
 
-  @Column()
-  password: string
+  @Column({ default: helpStartCount })
+  skips: number = helpStartCount
 
-  @Column()
-  skips: number
+  @Column({ default: helpStartCount })
+  halfHalf: number = helpStartCount
 
-  @Column()
-  halfHalf: number
-
-  @Column()
-  questionIndex: number
+  @Column({ default: 0 })
+  questionIndex: number = 0
 
   @CreateDateColumn()
   startDate: Date
 
-  @Column()
-  wrongPrize: number
+  @Column({ default: 0 })
+  wrongPrize: number = 0
 
-  @Column()
-  stopPrize: number
+  @Column({ default: 0 })
+  stopPrize: number = 0
 
-  @Column()
-  correctPrize: number
+  @Column({ default: 1_000 })
+  nextPrize: number = 1_000
 
   // historic
-  @OneToMany(() => Historic, (h) => h.match)
+  @OneToOne(() => Historic, (h) => h.match, { cascade: true })
   historic: Historic
 
-  @OneToOne(()=> User, (u) => u.matchs)
+  @OneToOne(()=> User, (u) => u.matchs, { cascade: true })
   user?: User
 }

@@ -4,10 +4,13 @@ import {
     ArgumentsHost,
     BadRequestException,
     HttpException,
+    InternalServerErrorException,
 } from '@nestjs/common'
 import { Response } from 'express'
 
-// @Catch(BadRequestException)
+@Catch(HttpException)
+@Catch(InternalServerErrorException)
+@Catch(BadRequestException)
 export class CustomBadRequestFilter implements ExceptionFilter {
     catch(exception: BadRequestException, host: ArgumentsHost) {
         // pegar infos

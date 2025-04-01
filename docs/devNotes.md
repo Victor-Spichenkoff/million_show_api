@@ -1,6 +1,7 @@
 # TO DO
-- Implementar semi auth
-
+- Implementar match + historico
+- Logica de responder/parar
+- Criar huisticos
 
 # Só criar historic ao terminar mesmo
 
