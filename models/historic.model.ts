@@ -28,12 +28,12 @@ export class Historic {
   finalState?: States = undefined
 
   // match id
-  @OneToOne(()=> Match)
+  @OneToOne(()=> Match, { onDelete: "CASCADE" })
   @JoinColumn({ referencedColumnName: 'id', name: "match_id" })
   match: Match
 
   //user id
-  @ManyToOne(()=> User, (user) => user.historic)
+  @ManyToOne(()=> User, (user) => user.historic, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId", referencedColumnName: "id" })
   user: User
 

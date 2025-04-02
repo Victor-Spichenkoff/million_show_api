@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHistoricDto } from './dto/create-historic.dto';
 import { UpdateHistoricDto } from './dto/update-historic.dto';
+import { Historic } from 'models/historic.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class HistoricService {
+  constructor(
+    @InjectRepository(Historic) private readonly _hr: Repository<Historic>,
+  ) { }
+
   create(createHistoricDto: CreateHistoricDto) {
     return 'This action adds a new historic';
   }
@@ -22,5 +29,12 @@ export class HistoricService {
 
   remove(id: number) {
     return `This action removes a #${id} historic`;
+  }
+
+  async removeAll(historics: Historic[]) {
+    for(let h of historics) 
+      await this._hr.delete(h.id)
+
+    return true
   }
 }

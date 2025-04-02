@@ -1,4 +1,4 @@
-import { CreateDateColumn, Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
+import { CreateDateColumn, Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { States } from '../types/states';
 import { Historic } from './historic.model';
 import { User } from './user.model';
@@ -35,9 +35,11 @@ export class Match {
   nextPrize: number = 1_000
 
   // historic
-  @OneToOne(() => Historic, (h) => h.match, { cascade: true })
+  @OneToOne(() => Historic, (h) => h.match, { onDelete: "CASCADE" })
+  // @JoinColumn({ name: "historic_id" })
   historic: Historic
 
-  @OneToOne(()=> User, (u) => u.matchs, { cascade: true })
+  @ManyToOne(()=> User, (u) => u.matchs, { onDelete: "CASCADE" })
+  @JoinColumn()
   user?: User
 }

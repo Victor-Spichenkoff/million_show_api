@@ -11,6 +11,12 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
+  @Delete("/clean")
+  async removeAllFromUser(@Request() req) {
+    return await this.matchService.removeByUser(+req.user.id)
+  }
+
+
   @Post("/start")
   create(@Body() createMatchDto: CreateMatchDto, @Request() req) {
     return this.matchService.create(createMatchDto, req.user.id);
