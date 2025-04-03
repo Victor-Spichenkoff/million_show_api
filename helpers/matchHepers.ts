@@ -1,3 +1,4 @@
+import { BadRequestException } from "@nestjs/common";
 import { Match } from "models/match.model";
 import { Prizes } from "types/prizes";
 
@@ -18,6 +19,20 @@ export const giveCurrentMatch = (matchs: Match[] | undefined) => {
 
     if (currentMatch.length == 0)
         return null
+    
+
+    return currentMatch[0]
+}
+
+export const giveCurrentMatchOrThrow = (matchs: Match[] | undefined) => {
+    if (!matchs)
+        throw new BadRequestException("User has no active match")
+
+    const currentMatch = matchs.filter(m => m.state == "playing")
+
+    if (currentMatch.length == 0)
+        throw new BadRequestException("User has no active match")
+    
 
     return currentMatch[0]
 }
@@ -49,4 +64,13 @@ export const getCurrentPrizes = (index: number): Prizes => {
         stopPrize: prizes[index],
         nextPrize: prizes[index + 1]
     }
+}
+
+export const getLevelByQuetionIndex = (questionIndex: number) => {
+    if(questionIndex < 5)
+        return 1
+    else if (questionIndex < 10)
+        return 2
+
+    return 3
 }

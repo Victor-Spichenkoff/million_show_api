@@ -32,6 +32,6 @@ export class Question {
   level: 1 | 2 | 3
 
 
-  @ManyToMany(() => Historic, (h) => h.questions)
+  @ManyToMany(() => Historic, (h) => h.questions, { cascade: true })
   historic: Historic[]
 }

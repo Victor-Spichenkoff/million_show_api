@@ -7,10 +7,10 @@ import { UpdateHistoricDto } from './dto/update-historic.dto';
 export class HistoricController {
   constructor(private readonly historicService: HistoricService) {}
 
-  @Post()
-  create(@Body() createHistoricDto: CreateHistoricDto) {
-    return this.historicService.create(createHistoricDto);
-  }
+  // @Post()
+  // create(@Body() createHistoricDto: CreateHistoricDto) {
+  //   return this.historicService.create(createHistoricDto);
+  // }
 
   @Get()
   findAll() {
@@ -22,13 +22,13 @@ export class HistoricController {
     return this.historicService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHistoricDto: UpdateHistoricDto) {
-    return this.historicService.update(+id, updateHistoricDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateHistoricDto: UpdateHistoricDto) {
+  //   return this.historicService.update(+id, updateHistoricDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.historicService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.historicService.remove(+id);
+  // }
 }

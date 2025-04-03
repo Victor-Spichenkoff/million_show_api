@@ -6,12 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Historic } from 'models/historic.model'
 import { UserService } from '../user/user.service'
-import { getCurrentPrizes, giveCurrentMatch, isAlreadyStarted } from 'helpers/matchHepers'
+import { getCurrentPrizes, getLevelByQuetionIndex, giveCurrentMatch, giveCurrentMatchOrThrow, isAlreadyStarted } from 'helpers/matchHepers'
 import { formatToCompleteNormalTime } from 'helpers/time'
 import { AnswerIndex } from 'types/indexs'
 import { QuestionState } from 'types/questionState';
 import { QuestionService } from '../question/question.service'
 import { match } from 'assert'
+import { UpdateHistoricDto } from '../historic/dto/update-historic.dto'
+import { use } from 'passport'
 
 @Injectable()
 export class MatchService {
@@ -19,9 +21,11 @@ export class MatchService {
         @InjectRepository(Match) private readonly _matchRepo: Repository<Match>,
         @InjectRepository(Historic) private readonly _historyRepo: Repository<Historic>,
         private readonly _userService: UserService,
-        // private readonly _questionService: QuestionService
+        private readonly _questionService: QuestionService
 
     ) { }
+
+
 
 
     async aswerQuestion(userId: number, answerIndex: AnswerIndex) {
@@ -31,7 +35,7 @@ export class MatchService {
             where: { user: { id: userId }, state: "playing" },
             relations: { historic: { questions: true } }
         })
-        
+
         // const currentMatch = giveCurrentMatch(user?.matchs)
         if (!currentMatch)
             throw new BadRequestException("User has no active match")
@@ -76,23 +80,70 @@ export class MatchService {
     async getNext(userId: number) {
         const user = await this._userService.findOne(userId, true)
 
-        const currentMatch = giveCurrentMatch(user?.matchs)
-        if (!currentMatch)
-            throw new BadRequestException("User has no active match")
+        const currentMatch = giveCurrentMatchOrThrow(user?.matchs)
 
-        if (currentMatch.questionState == "wating")
+        const currentHistoric = await this._historyRepo.findOneOrFail({ 
+            where: { match: { id: currentMatch.id } }, 
+            relations: { questions: true } 
+        })
+
+        if (currentMatch.questionState == "wating" && currentHistoric.questions.length > 0)
             throw new BadRequestException("Answer the previous question first!")
 
+
+        //update historic and add question
+        const newlevel = getLevelByQuetionIndex(currentMatch.questionIndex)
+
+        const userHistoric = await this._historyRepo.findBy(
+            {
+                user: { id: userId },
+            })
+
+        const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel)
+
+        
+        if (!currentHistoric.questions) {
+            currentHistoric.questions = [newQuestion]
+        } 
+        else
+            currentHistoric.questions.push(newQuestion)
+
+        //update currentMatch
         const currentPrizes = getCurrentPrizes(currentMatch.questionIndex)
         currentMatch.nextPrize = currentPrizes.nextPrize
         currentMatch.wrongPrize = currentPrizes.wrongPrize
         currentMatch.stopPrize = currentPrizes.stopPrize
+        currentMatch.questionIndex = currentHistoric.questions?.length ?? 0
+        currentMatch.questionState = "wating"
+        currentMatch.hintState = "none"
+
+
+        this._historyRepo.save(currentHistoric)
+        // this._historyRepo.update(currentHistoric.id, currentHistoric)
+        this._matchRepo.update(currentMatch.id, currentMatch)
+
+        return newQuestion
     }
 
 
     async getCurrentQuestion(userId: number) {
+        const currentHistoric = await this._historyRepo.findOne({
+            where: {
+                user: { id: userId },
+                match: { state: "playing" }
+            },
+            relations: { questions: true }
+        })
+
+        if (!currentHistoric?.questions || currentHistoric?.questions?.length < 1)
+            throw new BadRequestException("Please get the new question at /match/next")
+
+        return currentHistoric?.questions[currentHistoric.questions.length - 1]
+    }
+
+    async getCurrentMatch(userId) {
         const user = await this._userService.findOne(userId, true)
-        return giveCurrentMatch(user?.matchs)
+        return giveCurrentMatchOrThrow(user?.matchs)
     }
 
 

@@ -16,11 +16,14 @@ export class HistoricService {
   }
 
   findAll() {
-    return `This action returns all historic`;
+    return this._hr.find({ relations: { questions: true } })
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} historic`;
+    return this._hr.findOne({
+      where: { id },
+      relations: { questions: true }
+     })
   }
 
   update(id: number, updateHistoricDto: UpdateHistoricDto) {

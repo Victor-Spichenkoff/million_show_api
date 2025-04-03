@@ -1,5 +1,5 @@
 import { CreateDateColumn, Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
-import { States } from '../types/states';
+import { HintState, States } from '../types/states';
 import { Historic } from './historic.model';
 import { User } from './user.model';
 import { QuestionState } from 'types/questionState';
@@ -13,6 +13,9 @@ export class Match {
 
   @Column({ default: "playing" })
   state: States = "playing"
+
+  @Column({ default: "none" })
+  hintState: HintState = "none"
 
   @Column({ default: helpStartCount })
   skips: number = helpStartCount

@@ -7,6 +7,7 @@ import {
   JoinColumn,
   OneToOne,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { States } from '../types/states';
 import { User } from './user.model';
@@ -28,17 +29,18 @@ export class Historic {
   finalState?: States = undefined
 
   // match id
-  @OneToOne(()=> Match, { onDelete: "CASCADE" })
+  @OneToOne(() => Match, { onDelete: "CASCADE" })
   @JoinColumn({ referencedColumnName: 'id', name: "match_id" })
   match: Match
 
   //user id
-  @ManyToOne(()=> User, (user) => user.historic, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.historic, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId", referencedColumnName: "id" })
   user: User
 
   // many -> questions
-  @ManyToMany(()=> Question, (question) => question.historic)
-  @JoinColumn({ name: 'question_id', referencedColumnName: "id" })
+  @ManyToMany(() => Question, (question) => question.historic, )
+  @JoinTable()
+  // @JoinColumn({ name: 'question_id', referencedColumnName: "id" })
   questions: Question[]
 }

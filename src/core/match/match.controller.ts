@@ -14,24 +14,6 @@ import { plainToInstance } from 'class-transformer';
 export class MatchController {
   constructor(private readonly matchService: MatchService) { }
 
-  @Delete("/clean")
-  async removeAllFromUser(@Request() req) {
-    return await this.matchService.removeByUser(+req.user.id)
-  }
-
-  @Patch("/asnwer/:index")
-  async answer(@Param("index") index: AnswerIndex, @Request() req) {
-    return await this.matchService.aswerQuestion(+req.user.id, index)
-  }
-
-
-  @Get("/next")
-  async getNextQuestion(@Request() req) {
-    const question = await this.matchService.getNext(+req.user.id)
-  
-    return  plainToInstance(GetQuestionDto, question)
-  }
-
 
   @ApiQuery({ name: "force", required: false, type: Boolean, example: "" })
   @Post("/start")
@@ -42,21 +24,64 @@ export class MatchController {
     return this.matchService.create(createMatchDto, req.user.id, force == "true")
   }
 
+  @Get("/next")
+  async getNextQuestion(@Request() req) {
+    const question = await this.matchService.getNext(+req.user.id)
+
+    return plainToInstance(GetQuestionDto, question)
+  }
+
+
+  @Patch("/asnwer/:index")
+  async answer(@Param("index") index: AnswerIndex, @Request() req) {
+    return await this.matchService.aswerQuestion(+req.user.id, index)
+  }
+
+
+  /**
+   * Da partida
+   */
+  @Get("/status")
+  async getCurrentData(@Request() req) {
+    return await this.matchService.getCurrentMatch(+req.user.id)
+  }
+
+
+  @Get("/current/question")
+  async getCurrentQuestion(@Request() req) {
+    return await this.matchService.getCurrentQuestion(+req.user.id)
+  }
+
+
   @Get()
   findAll() {
     return this.matchService.findAll();
   }
+
+
+  /**
+   * 100%, apaga mesmo
+   */
+  @Delete("/clean")
+  async removeAllFromUser(@Request() req) {
+    return await this.matchService.removeByUser(+req.user.id)
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.matchService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMatchDto: UpdateMatchDto) {
-    return this.matchService.update(+id, updateMatchDto);
-  }
 
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateMatchDto: UpdateMatchDto) {
+  //   return this.matchService.update(+id, updateMatchDto);
+  // }
+
+  /**
+   * Individual
+   */
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.matchService.remove(+id);

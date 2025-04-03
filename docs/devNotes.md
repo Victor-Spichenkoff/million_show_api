@@ -1,4 +1,6 @@
 # TO DO
+-EROOR
+    - Não salva o novo questions usando o historic
 - Logica de responder/parar
 - Logica dicas
 - Logica erro
@@ -12,6 +14,9 @@
 # Question
 - Só para editar, criar...
 - Relacionado a partida, mesmo pegar uma question, é match
+
+# Após 10 partidas (20 max) tirar do historic
+- Para evitar que não consiga achar uma question
 
 # match
 - vai ter userId
