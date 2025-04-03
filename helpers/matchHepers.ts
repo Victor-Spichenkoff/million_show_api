@@ -1,10 +1,52 @@
 import { Match } from "models/match.model";
+import { Prizes } from "types/prizes";
 
 export const isAlreadyStarted = (matchs: Match[]): false | Match[] => {
-    if(!matchs || matchs.length == 0)
+    if (!matchs || matchs.length == 0)
         return false
 
     const alreadystarted = matchs.filter((m) => m.state == "playing")
 
     return alreadystarted.length > 0 && alreadystarted
+}
+
+export const giveCurrentMatch = (matchs: Match[] | undefined) => {
+    if (!matchs)
+        return null
+
+    const currentMatch = matchs.filter(m => m.state == "playing")
+
+    if (currentMatch.length == 0)
+        return null
+
+    return currentMatch[0]
+}
+
+
+const prizes = [0, 1_000, 2_000, 3_000, 4_000, 5_000, 
+    10_000, 20_000, 30_000, 40_000, 50_000,
+    100_000, 200_000, 300_000, 400_000, 500_000 ]
+
+
+/** */
+export const getCurrentPrizes = (index: number): Prizes => {
+    if (index == 0)
+        return {
+            wrongPrize: 0,
+            stopPrize: 0,
+            nextPrize: 1_000
+        }
+
+    if (index == 15)
+        return {
+            wrongPrize: 0,
+            stopPrize: 500_000,
+            nextPrize: 1_000_000
+        }
+
+    return {
+        wrongPrize: prizes[index - 1],
+        stopPrize: prizes[index],
+        nextPrize: prizes[index + 1]
+    }
 }

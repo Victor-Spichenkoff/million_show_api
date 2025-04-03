@@ -6,16 +6,95 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Historic } from 'models/historic.model'
 import { UserService } from '../user/user.service'
-import { isAlreadyStarted } from 'helpers/matchHepers'
+import { getCurrentPrizes, giveCurrentMatch, isAlreadyStarted } from 'helpers/matchHepers'
 import { formatToCompleteNormalTime } from 'helpers/time'
+import { AnswerIndex } from 'types/indexs'
+import { QuestionState } from 'types/questionState';
+import { QuestionService } from '../question/question.service'
+import { match } from 'assert'
 
 @Injectable()
 export class MatchService {
     constructor(
         @InjectRepository(Match) private readonly _matchRepo: Repository<Match>,
         @InjectRepository(Historic) private readonly _historyRepo: Repository<Historic>,
-        private readonly _userService: UserService
+        private readonly _userService: UserService,
+        // private readonly _questionService: QuestionService
+
     ) { }
+
+
+    async aswerQuestion(userId: number, answerIndex: AnswerIndex) {
+        // const user = await this._userService.findOne(userId, true)
+
+        const currentMatch = await this._matchRepo.findOne({
+            where: { user: { id: userId }, state: "playing" },
+            relations: { historic: { questions: true } }
+        })
+        
+        // const currentMatch = giveCurrentMatch(user?.matchs)
+        if (!currentMatch)
+            throw new BadRequestException("User has no active match")
+
+        if (currentMatch.questionState == "answered")
+            throw new BadRequestException("User already responded to last question. Orde a new one at /match/next")
+
+
+        const questions = currentMatch.historic.questions
+        const lastQuestion = questions[questions.length - 1]
+
+        //erroU ?
+        if (answerIndex != lastQuestion.answerIndex) {
+            currentMatch.state = 'lost'
+
+            const prize = getCurrentPrizes(currentMatch.questionIndex)
+
+            await this._historyRepo.update(
+                { match: { id: currentMatch.id } },//where
+                {
+                    finalPrize: prize.wrongPrize,
+                    finishDate: Number(new Date()),
+                    finalState: "lost",
+                }
+            )
+
+
+            await this._matchRepo.update(currentMatch.id, currentMatch)
+
+            const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
+            return `Wrong! \nThe answer was ${correctOption} \nYou won $${prize.wrongPrize}`
+        }
+
+        //acertou
+    }
+
+
+
+    /*
+    Vai apenas devolver uma nova quest random
+    */
+    async getNext(userId: number) {
+        const user = await this._userService.findOne(userId, true)
+
+        const currentMatch = giveCurrentMatch(user?.matchs)
+        if (!currentMatch)
+            throw new BadRequestException("User has no active match")
+
+        if (currentMatch.questionState == "wating")
+            throw new BadRequestException("Answer the previous question first!")
+
+        const currentPrizes = getCurrentPrizes(currentMatch.questionIndex)
+        currentMatch.nextPrize = currentPrizes.nextPrize
+        currentMatch.wrongPrize = currentPrizes.wrongPrize
+        currentMatch.stopPrize = currentPrizes.stopPrize
+    }
+
+
+    async getCurrentQuestion(userId: number) {
+        const user = await this._userService.findOne(userId, true)
+        return giveCurrentMatch(user?.matchs)
+    }
+
 
     async create(createMatchDto: CreateMatchDto, userId: number, force = false) {
         const user = await this._userService.findOne(userId, true)
@@ -26,8 +105,8 @@ export class MatchService {
         if (alreadyStartedMatch && !force) {
             const time = formatToCompleteNormalTime((new Date(alreadyStartedMatch[0].startDate)))
             throw new BadRequestException("You have already started a match at " + time + ". Please use /match/start?force=true")
-        } else if (alreadyStartedMatch && force) 
-                this.setManyToCancelled(alreadyStartedMatch)
+        } else if (alreadyStartedMatch && force)
+            this.setManyToCancelled(alreadyStartedMatch)
 
 
         const newMatch = new Match()
@@ -51,7 +130,6 @@ export class MatchService {
         return finalMatch
     }
 
-
     findAll() {
         return this._matchRepo.find({
             relations: {
@@ -61,18 +139,14 @@ export class MatchService {
         })
     }
 
-
-    findOne(id: number) {
-        return `This action returns a #${id} match`
+    async findOne(id: number) {
+        return await this._matchRepo.findOneBy({ id })
     }
-
 
     update(id: number, updateMatchDto: UpdateMatchDto) {
         return `This action updates a #${id} match`
     }
 
-    
-    
     async remove(id: number) {
         return this._matchRepo.delete(id)
     }
@@ -83,8 +157,8 @@ export class MatchService {
         })
     }
 
-    async setManyToCancelled (matchs: Match[]) {
-        for(let match of matchs) {
+    async setManyToCancelled(matchs: Match[]) {
+        for (let match of matchs) {
             match.state = "cancelled"
             await this._matchRepo.update(match.id, match)
         }

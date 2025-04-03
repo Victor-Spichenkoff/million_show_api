@@ -4,6 +4,9 @@ import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { AnswerIndex } from 'types/indexs';
+import { GetQuestionDto } from './dto/getQuestion.dto';
+import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -15,6 +18,20 @@ export class MatchController {
   async removeAllFromUser(@Request() req) {
     return await this.matchService.removeByUser(+req.user.id)
   }
+
+  @Patch("/asnwer/:index")
+  async answer(@Param("index") index: AnswerIndex, @Request() req) {
+    return await this.matchService.aswerQuestion(+req.user.id, index)
+  }
+
+
+  @Get("/next")
+  async getNextQuestion(@Request() req) {
+    const question = await this.matchService.getNext(+req.user.id)
+  
+    return  plainToInstance(GetQuestionDto, question)
+  }
+
 
   @ApiQuery({ name: "force", required: false, type: Boolean, example: "" })
   @Post("/start")

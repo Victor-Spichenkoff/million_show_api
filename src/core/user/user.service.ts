@@ -44,7 +44,11 @@ export class UserService {
     }
 
     findOne(id: number, includeMatch = false) {
-        return this._ur.findOne({ where: { id }, relations: { historic: true, matchs: includeMatch } })
+        return this._ur.findOne({ 
+            where: { id }, 
+            relations: { 
+                historic: { questions: true }, matchs: includeMatch 
+            } })
     }
 
     async update(id: number, updateUserDto: UpdateUserDto) {

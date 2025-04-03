@@ -17,7 +17,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // substitui o original, posso mexer nele
     handleRequest(err, user, info, context) {
         if (err || !user) {
-            throw new UnauthorizedException('Token inválido ou ausente');
+            throw new UnauthorizedException('Token invalid');
         }
 
         // Adiciona o usuário na requisição para handlers posteriores

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import { Historic } from './historic.model';
+import { AnswerIndex } from 'types/indexs';
 
 @Entity()
 export class Question {
@@ -25,7 +26,7 @@ export class Question {
   option4: string
 
   @Column()
-  answerIndex: 1 | 2 | 3 | 4
+  answerIndex: AnswerIndex
 
   @Column()
   level: 1 | 2 | 3
