@@ -6,15 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Historic } from 'models/historic.model'
 import { UserService } from '../user/user.service'
-import { getCurrentPrizes, getLevelByQuetionIndex, giveCurrentMatch, giveCurrentMatchOrThrow, isAlreadyStarted } from 'helpers/matchHepers'
+import { getCurrentPrizes, getLevelByQuetionIndex, giveCurrentMatchOrThrow, isAlreadyStarted } from 'helpers/matchHepers'
 import { formatToCompleteNormalTime } from 'helpers/time'
 import { AnswerIndex } from 'types/indexs'
-import { QuestionState } from 'types/questionState';
 import { QuestionService } from '../question/question.service'
-import { match } from 'assert'
-import { UpdateHistoricDto } from '../historic/dto/update-historic.dto'
-import { use } from 'passport'
-
+import { AnswerReponse } from 'types/reponses'
 @Injectable()
 export class MatchService {
     constructor(
@@ -22,13 +18,10 @@ export class MatchService {
         @InjectRepository(Historic) private readonly _historyRepo: Repository<Historic>,
         private readonly _userService: UserService,
         private readonly _questionService: QuestionService
-
     ) { }
 
 
-
-
-    async aswerQuestion(userId: number, answerIndex: AnswerIndex) {
+    async aswerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerReponse> {
 
         const currentMatch = await this._matchRepo.findOne({
             where: { user: { id: userId }, state: "playing" },
@@ -66,7 +59,12 @@ export class MatchService {
             // await this._matchRepo.update(currentMatch.id, currentMatch)
 
             const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
-            return `Wrong! \nThe answer was ${correctOption} \nYou won $${prizes.wrongPrize}`
+            return {
+                isCorrect: false,
+                correctAnswer: correctOption,
+                finalPrize: prizes.wrongPrize
+            }
+            // return `Wrong! \nThe answer was ${correctOption} \nYou won $${prizes.wrongPrize}`
         }
 
         //acertou
@@ -74,15 +72,16 @@ export class MatchService {
         currentMatch.questionState = "answered"
 
         this._matchRepo.save(currentMatch)
-        return "Correct!"
+        return {
+            isCorrect: true,
+        }
     }
-
-
 
     /*
     Vai apenas devolver uma nova quest random
     */
-    async getNext(userId: number) {
+    async getNext(userId: number, isEn = false) {
+        console.log("isEn ", isEn)
         const user = await this._userService.findOne(userId, true)
 
         const currentMatch = giveCurrentMatchOrThrow(user?.matchs)
@@ -103,12 +102,11 @@ export class MatchService {
                 user: { id: userId },
             })
 
-        const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel)
+        const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel,isEn)
 
 
-        if (!currentHistoric.questions) {
+        if (!currentHistoric.questions)
             currentHistoric.questions = [newQuestion]
-        }
         else
             currentHistoric.questions.push(newQuestion)
 

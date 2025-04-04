@@ -11,8 +11,10 @@ export class QuestionService {
     constructor(@InjectRepository(Question) private readonly _qr: Repository<Question>) { }
 
 
-    async getNewQuestionFiltered(userHistoric: Historic[], level: 1 | 2 | 3) {
+    async getNewQuestionFiltered(userHistoric: Historic[], level: 1 | 2 | 3, isEn: boolean) {
         const questionsIds: number[] = []//userHistoric.map(h => h.questions.map(q => q.id))
+
+        // const isBr = !isEn
 
         for (let historic of userHistoric)
             if (historic.questions)
@@ -22,6 +24,7 @@ export class QuestionService {
         const randomQuestion = await this._qr.createQueryBuilder("question")
             .where("question.id NOT IN (:...questionsIds)", { questionsIds })
             .andWhere("question.level = :level", { level })
+            .andWhere("question.isBr != :isEn", { isEn })
             .orderBy("RANDOM()")
             .getOne()
 
@@ -29,7 +32,8 @@ export class QuestionService {
             return randomQuestion
 
         const secondTry = await this._qr.createQueryBuilder("question")
-            .andWhere("question.level = :level", { level })
+            .where("question.level = :level", { level })
+            .andWhere("question.isBr != :isEn", { isEn })
             .orderBy("RANDOM()")
             .getOne()
 

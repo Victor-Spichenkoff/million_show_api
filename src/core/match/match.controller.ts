@@ -24,12 +24,14 @@ export class MatchController {
     return this.matchService.create(createMatchDto, req.user.id, force == "true")
   }
 
+
+  @ApiQuery({ name: "isEn", required: false, type: Boolean, example: "" })
   @Get("/next")
-  async getNextQuestion(@Request() req) {
-    const question = await this.matchService.getNext(+req.user.id)
+  async getNextQuestion(@Request() req, @Query("isEn") isEn?: string) {
+    const question = await this.matchService.getNext(+req.user.id, isEn == "true")
 
     return plainToInstance(GetQuestionDto, question)
-  }
+  } 
 
 
   @Patch("/asnwer/:index")
@@ -49,7 +51,8 @@ export class MatchController {
 
   @Get("/current/question")
   async getCurrentQuestion(@Request() req) {
-    return await this.matchService.getCurrentQuestion(+req.user.id)
+    const question = await this.matchService.getCurrentQuestion(+req.user.id)
+    return plainToInstance(GetQuestionDto, question)
   }
 
 
