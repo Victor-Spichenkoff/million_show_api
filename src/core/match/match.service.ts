@@ -29,7 +29,6 @@ export class MatchService {
 
 
     async aswerQuestion(userId: number, answerIndex: AnswerIndex) {
-        // const user = await this._userService.findOne(userId, true)
 
         const currentMatch = await this._matchRepo.findOne({
             where: { user: { id: userId }, state: "playing" },
@@ -37,11 +36,13 @@ export class MatchService {
         })
 
         // const currentMatch = giveCurrentMatch(user?.matchs)
+        
         if (!currentMatch)
             throw new BadRequestException("User has no active match")
 
         if (currentMatch.questionState == "answered")
-            throw new BadRequestException("User already responded to last question. Orde a new one at /match/next")
+            throw new BadRequestException("User already responded to last question. Order a new one at /match/next")
+
 
 
         const questions = currentMatch.historic.questions
@@ -50,26 +51,30 @@ export class MatchService {
         //erroU ?
         if (answerIndex != lastQuestion.answerIndex) {
             currentMatch.state = 'lost'
-
-            const prize = getCurrentPrizes(currentMatch.questionIndex)
+            
+            const prizes = getCurrentPrizes(currentMatch.questionIndex)
 
             await this._historyRepo.update(
                 { match: { id: currentMatch.id } },//where
                 {
-                    finalPrize: prize.wrongPrize,
+                    finalPrize: prizes.wrongPrize,
                     finishDate: Number(new Date()),
                     finalState: "lost",
                 }
             )
-
-
-            await this._matchRepo.update(currentMatch.id, currentMatch)
+            await this._matchRepo.save(currentMatch)
+            // await this._matchRepo.update(currentMatch.id, currentMatch)
 
             const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
-            return `Wrong! \nThe answer was ${correctOption} \nYou won $${prize.wrongPrize}`
+            return `Wrong! \nThe answer was ${correctOption} \nYou won $${prizes.wrongPrize}`
         }
 
         //acertou
+        currentMatch.hintState = "none"
+        currentMatch.questionState = "answered"
+
+        this._matchRepo.save(currentMatch)
+        return "Correct!"
     }
 
 
@@ -82,14 +87,13 @@ export class MatchService {
 
         const currentMatch = giveCurrentMatchOrThrow(user?.matchs)
 
-        const currentHistoric = await this._historyRepo.findOneOrFail({ 
-            where: { match: { id: currentMatch.id } }, 
-            relations: { questions: true } 
+        const currentHistoric = await this._historyRepo.findOneOrFail({
+            where: { match: { id: currentMatch.id } },
+            relations: { questions: true }
         })
 
         if (currentMatch.questionState == "wating" && currentHistoric.questions.length > 0)
             throw new BadRequestException("Answer the previous question first!")
-
 
         //update historic and add question
         const newlevel = getLevelByQuetionIndex(currentMatch.questionIndex)
@@ -101,10 +105,10 @@ export class MatchService {
 
         const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel)
 
-        
+
         if (!currentHistoric.questions) {
             currentHistoric.questions = [newQuestion]
-        } 
+        }
         else
             currentHistoric.questions.push(newQuestion)
 

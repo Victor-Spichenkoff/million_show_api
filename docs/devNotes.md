@@ -1,9 +1,8 @@
 # TO DO
--EROOR
-    - Não salva o novo questions usando o historic
 - Logica de responder/parar
 - Logica dicas
 - Logica erro
+- Locia de apagar histircos extras. Ver se colocar ao responder também
 
 # Só criar historic ao terminar mesmo
 
