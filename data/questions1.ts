@@ -410,5 +410,406 @@ export const QuestionsLevel1: MockQuestion[] = [
         isBr: true,
         answerIndex: 3,
         level: 1
+      },
+      // ENGLISH
+      {
+        "label": "What is the spoken language in the United States?",
+        "option1": "English",
+        "option2": "German",
+        "option3": "Portuguese",
+        "option4": "American",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "What is the largest planet in the Solar System?",
+        "option1": "Jupiter",
+        "option2": "Mars",
+        "option3": "Earth",
+        "option4": "Venus",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "How many sides does a triangle have?",
+        "option1": "Four",
+        "option2": "Three",
+        "option3": "Five",
+        "option4": "Six",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Who painted the Mona Lisa?",
+        "option1": "Michelangelo",
+        "option2": "Vincent van Gogh",
+        "option3": "Leonardo da Vinci",
+        "option4": "Pablo Picasso",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "How many days are in a common year?",
+        "option1": "364",
+        "option2": "366",
+        "option3": "365",
+        "option4": "360",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "Which metal is found at the Earth's core?",
+        "option1": "Gold",
+        "option2": "Iron",
+        "option3": "Copper",
+        "option4": "Silver",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which of these animals is a mammal?",
+        "option1": "Shark",
+        "option2": "Snake",
+        "option3": "Dolphin",
+        "option4": "Eagle",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "What continent is Brazil located in?",
+        "option1": "Asia",
+        "option2": "Europe",
+        "option3": "Africa",
+        "option4": "America",
+        "isBr": false,
+        "answerIndex": 4,
+        "level": 1
+      },
+      {
+        "label": "What does a cow produce?",
+        "option1": "Milk",
+        "option2": "Honey",
+        "option3": "Coffee",
+        "option4": "Meat",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "What color is the sky on a sunny day?",
+        "option1": "Green",
+        "option2": "Blue",
+        "option3": "Red",
+        "option4": "Black",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "What do we use to brush our teeth?",
+        "option1": "Soap",
+        "option2": "Toothbrush and toothpaste",
+        "option3": "Comb",
+        "option4": "Towel",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which of these animals lays eggs?",
+        "option1": "Cat",
+        "option2": "Dog",
+        "option3": "Hen",
+        "option4": "Horse",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "How many months are there in a year?",
+        "option1": "10",
+        "option2": "12",
+        "option3": "11",
+        "option4": "14",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Who is the president of Brazil in 2023?",
+        "option1": "Dilma Rousseff",
+        "option2": "Jair Bolsonaro",
+        "option3": "Luiz Inácio Lula da Silva",
+        "option4": "Fernando Henrique Cardoso",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "What is bigger?",
+        "option1": "An apple",
+        "option2": "A car",
+        "option3": "An ant",
+        "option4": "A coin",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "How many eyes does a person usually have?",
+        "option1": "Three",
+        "option2": "Four",
+        "option3": "Two",
+        "option4": "One",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "What is the main ingredient in bread?",
+        "option1": "Sugar",
+        "option2": "Salt",
+        "option3": "Flour",
+        "option4": "Milk",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "How many legs does a dog have?",
+        "option1": "Two",
+        "option2": "Four",
+        "option3": "Six",
+        "option4": "Eight",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which of these objects is used to cut paper?",
+        "option1": "Hammer",
+        "option2": "Scissors",
+        "option3": "Spoon",
+        "option4": "Pencil",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "What is a triangle?",
+        "option1": "A fruit",
+        "option2": "A geometric shape",
+        "option3": "An animal",
+        "option4": "A color",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "How many fingers does a human hand usually have?",
+        "option1": "Five",
+        "option2": "Four",
+        "option3": "Six",
+        "option4": "Seven",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "What color are bananas when ripe?",
+        "option1": "Green",
+        "option2": "Yellow",
+        "option3": "Red",
+        "option4": "Blue",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "What time of day do we usually have breakfast?",
+        "option1": "Morning",
+        "option2": "Afternoon",
+        "option3": "Evening",
+        "option4": "Night",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "Which of these is a vegetable?",
+        "option1": "Apple",
+        "option2": "Carrot",
+        "option3": "Strawberry",
+        "option4": "Banana",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which sense is used to hear?",
+        "option1": "Sight",
+        "option2": "Hearing",
+        "option3": "Smell",
+        "option4": "Touch",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "What is the color of blood?",
+        "option1": "Blue",
+        "option2": "Yellow",
+        "option3": "Red",
+        "option4": "Green",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "Which of these is a domestic animal?",
+        "option1": "Lion",
+        "option2": "Tiger",
+        "option3": "Dog",
+        "option4": "Crocodile",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "Which of these is a source of light?",
+        "option1": "Sun",
+        "option2": "Moon",
+        "option3": "Rock",
+        "option4": "Water",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "How many legs does a spider have?",
+        "option1": "Four",
+        "option2": "Six",
+        "option3": "Eight",
+        "option4": "Ten",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "Which part of the body do we use to see?",
+        "option1": "Nose",
+        "option2": "Mouth",
+        "option3": "Eyes",
+        "option4": "Hands",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "Which of these animals can fly?",
+        "option1": "Dog",
+        "option2": "Cat",
+        "option3": "Fish",
+        "option4": "Bird",
+        "isBr": false,
+        "answerIndex": 4,
+        "level": 1
+      },
+      {
+        "label": "Which of these is a type of fruit?",
+        "option1": "Chair",
+        "option2": "Pineapple",
+        "option3": "Shirt",
+        "option4": "Stone",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which number comes after 10?",
+        "option1": "9",
+        "option2": "10",
+        "option3": "11",
+        "option4": "12",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "What is water used for?",
+        "option1": "Washing, drinking, cooking",
+        "option2": "Sleeping",
+        "option3": "Flying",
+        "option4": "Writing",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
+      },
+      {
+        "label": "What is the color of the sun?",
+        "option1": "Blue",
+        "option2": "Red",
+        "option3": "Yellow",
+        "option4": "Green",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "What is used to write on paper?",
+        "option1": "Spoon",
+        "option2": "Pencil",
+        "option3": "Toothbrush",
+        "option4": "Fork",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which of these is a natural resource?",
+        "option1": "Plastic",
+        "option2": "Wood",
+        "option3": "Glass",
+        "option4": "Aluminum",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "What do we use to eat soup?",
+        "option1": "Fork",
+        "option2": "Knife",
+        "option3": "Spoon",
+        "option4": "Chopsticks",
+        "isBr": false,
+        "answerIndex": 3,
+        "level": 1
+      },
+      {
+        "label": "What is a tree?",
+        "option1": "An animal",
+        "option2": "A plant",
+        "option3": "A mineral",
+        "option4": "A toy",
+        "isBr": false,
+        "answerIndex": 2,
+        "level": 1
+      },
+      {
+        "label": "Which object shows time?",
+        "option1": "Clock",
+        "option2": "Shoe",
+        "option3": "Cup",
+        "option4": "Ball",
+        "isBr": false,
+        "answerIndex": 1,
+        "level": 1
       }
 ]

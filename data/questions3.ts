@@ -400,5 +400,347 @@ export const QuestionsLevel3: MockQuestion[] = [
     isBr: true,
     answerIndex: 2,
     level: 3
+  },
+
+  // ENGLISH
+  {
+    label: "What is the capital of Mongolia?",
+    option1: "Astana",
+    option2: "Ulaanbaatar",
+    option3: "Bishkek",
+    option4: "Dushanbe",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Which scientist developed the theory of special relativity?",
+    option1: "Isaac Newton",
+    option2: "Nikola Tesla",
+    option3: "Albert Einstein",
+    option4: "Stephen Hawking",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "Who was the last pharaoh of Egypt?",
+    option1: "Cleopatra",
+    option2: "Tutankhamun",
+    option3: "Ramses II",
+    option4: "Akhenaten",
+    isBr: false,
+    answerIndex: 1,
+    level: 3
+  },
+  {
+    label: "The book '1984', which describes a dystopian society, was written by:",
+    option1: "Aldous Huxley",
+    option2: "Ray Bradbury",
+    option3: "George Orwell",
+    option4: "Philip K. Dick",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "How many bones does an adult human have?",
+    option1: "195",
+    option2: "206",
+    option3: "213",
+    option4: "250",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "What was Leonardo da Vinci's full name?",
+    option1: "Leonardo di Ser Piero da Vinci",
+    option2: "Leonardo Buonarroti",
+    option3: "Leonardo di Medici",
+    option4: "Leonardo Borgia",
+    isBr: false,
+    answerIndex: 1,
+    level: 3
+  },
+  {
+    label: "Which chemical element has the symbol 'Rn'?",
+    option1: "Rhenium",
+    option2: "Radon",
+    option3: "Rubidium",
+    option4: "Ruthenium",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "In what year did the French Revolution take place?",
+    option1: "1756",
+    option2: "1789",
+    option3: "1804",
+    option4: "1848",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Which of these countries was NEVER a Portuguese colony?",
+    option1: "Angola",
+    option2: "Mozambique",
+    option3: "Indonesia",
+    option4: "Cape Verde",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "Who composed the Ninth Symphony?",
+    option1: "Johann Sebastian Bach",
+    option2: "Wolfgang Amadeus Mozart",
+    option3: "Ludwig van Beethoven",
+    option4: "Franz Schubert",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "What does the Richter scale measure?",
+    option1: "Wind speed",
+    option2: "Earthquake magnitude",
+    option3: "Solar radiation",
+    option4: "Thunder intensity",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Who painted the ceiling of the Sistine Chapel?",
+    option1: "Leonardo da Vinci",
+    option2: "Michelangelo",
+    option3: "Raphael",
+    option4: "Donatello",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Which of these creatures is NOT part of Greek mythology?",
+    option1: "Minotaur",
+    option2: "Basilisk",
+    option3: "Hydra",
+    option4: "Chimera",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "What is the chemical formula for glucose?",
+    option1: "C2H6O",
+    option2: "C6H12O6",
+    option3: "H2O2",
+    option4: "CH4",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "In which century was the Roman Colosseum built?",
+    option1: "1st century",
+    option2: "3rd century",
+    option3: "5th century",
+    option4: "7th century",
+    isBr: false,
+    answerIndex: 1,
+    level: 3
+  },
+  {
+    label: "Which civilization was the first to develop writing?",
+    option1: "Egyptians",
+    option2: "Sumerians",
+    option3: "Mayans",
+    option4: "Chinese",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Who was the first human to travel into space?",
+    option1: "Neil Armstrong",
+    option2: "Buzz Aldrin",
+    option3: "Yuri Gagarin",
+    option4: "Laika",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "What is the name of the treaty that ended World War I?",
+    option1: "Treaty of Tordesillas",
+    option2: "Treaty of Versailles",
+    option3: "Treaty of Vienna",
+    option4: "Treaty of Paris",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Who wrote 'The Republic', one of the most important philosophical works?",
+    option1: "Aristotle",
+    option2: "Plato",
+    option3: "Socrates",
+    option4: "Descartes",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "What is the speed of light in a vacuum?",
+    option1: "150,000 km/s",
+    option2: "200,000 km/s",
+    option3: "300,000 km/s",
+    option4: "350,000 km/s",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "Who was the first Roman emperor?",
+    option1: "Julius Caesar",
+    option2: "Nero",
+    option3: "Augustus",
+    option4: "Caligula",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "What is the largest desert in the world?",
+    option1: "Sahara",
+    option2: "Gobi",
+    option3: "Antarctic",
+    option4: "Kalahari",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "How many dwarf planets are there in the Solar System?",
+    option1: "3",
+    option2: "5",
+    option3: "7",
+    option4: "9",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Who wrote 'Don Quixote'?",
+    option1: "William Shakespeare",
+    option2: "Miguel de Cervantes",
+    option3: "Machado de Assis",
+    option4: "Victor Hugo",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "How many chromosomes does a human have?",
+    option1: "23",
+    option2: "44",
+    option3: "46",
+    option4: "48",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "In what year was the UN founded?",
+    option1: "1919",
+    option2: "1945",
+    option3: "1951",
+    option4: "1960",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Which scientist discovered radioactivity?",
+    option1: "Marie Curie",
+    option2: "Isaac Newton",
+    option3: "Albert Einstein",
+    option4: "Galileo Galilei",
+    isBr: false,
+    answerIndex: 1,
+    level: 3
+  },
+  {
+    label: "Which of these works was written by Franz Kafka?",
+    option1: "The Trial",
+    option2: "Crime and Punishment",
+    option3: "Les Misérables",
+    option4: "1984",
+    isBr: false,
+    answerIndex: 1,
+    level: 3
+  },
+  {
+    label: "Who was the leader of the Russian Revolution of 1917?",
+    option1: "Joseph Stalin",
+    option2: "Leon Trotsky",
+    option3: "Vladimir Lenin",
+    option4: "Mikhail Gorbachev",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "What was the first country to approve women's suffrage?",
+    option1: "United States",
+    option2: "Brazil",
+    option3: "New Zealand",
+    option4: "France",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "How many sides does a dodecagon have?",
+    option1: "10",
+    option2: "12",
+    option3: "14",
+    option4: "16",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Which of these discoveries is attributed to Nikola Tesla?",
+    option1: "Theory of Relativity",
+    option2: "Alternating Current",
+    option3: "Telephone",
+    option4: "Electric Battery",
+    isBr: false,
+    answerIndex: 2,
+    level: 3
+  },
+  {
+    label: "Which country has the largest Muslim population in the world?",
+    option1: "Saudi Arabia",
+    option2: "India",
+    option3: "Indonesia",
+    option4: "Pakistan",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
+  },
+  {
+    label: "Who was the last Tsar of Russia?",
+    option1: "Peter the Great",
+    option2: "Alexander III",
+    option3: "Nicholas II",
+    option4: "Ivan the Terrible",
+    isBr: false,
+    answerIndex: 3,
+    level: 3
   }
 ]

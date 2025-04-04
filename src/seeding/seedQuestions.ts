@@ -7,18 +7,18 @@ import {  Repository } from "typeorm";
 
 export const SeedQuestions = async (questionRepository: Repository<Question>) => {
     const questionsCount = await questionRepository.count()
-    if (questionsCount > QuestionsLevel1.length + QuestionsLevel2.length) {
+    if (questionsCount > QuestionsLevel1.length + QuestionsLevel2.length + QuestionsLevel3.length) {
         console.log(`[ SEED ] Total pre-seed: ${questionsCount}`)
         console.log(`[ SEED ] Expected min: ${QuestionsLevel2.length + QuestionsLevel1.length + QuestionsLevel3.length}`)
         return 0
     }
 
     //se tem o ultimo, deve ter feito tudo
-    const hasLastQuestionLevel3 = await questionRepository.findOneBy({ label: QuestionsLevel3[QuestionsLevel3.length - 1].label })
-    if (hasLastQuestionLevel3) {
-        console.log("[ SEED ] Has Last of Level 3, dont seeding")
-        return 0
-    }
+    // const hasLastQuestionLevel3 = await questionRepository.findOneBy({ label: QuestionsLevel3[QuestionsLevel3.length - 1].label })
+    // if (hasLastQuestionLevel3) {
+    //     console.log("[ SEED ] Has Last of Level 3, dont seeding")
+    //     return 0
+    // }
 
     //seeding real
     const allQuestions = [...QuestionsLevel1, ...QuestionsLevel2, ...QuestionsLevel3]
