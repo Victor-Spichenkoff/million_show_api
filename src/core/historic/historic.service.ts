@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateHistoricDto } from './dto/create-historic.dto';
 import { UpdateHistoricDto } from './dto/update-historic.dto';
 import { Historic } from 'models/historic.model';
@@ -21,6 +21,21 @@ export class HistoricService {
     }))[0]
   }
 
+  async getCurrentQuestion(userId: number) {
+    const historic = await this._hr.findOne({
+      where: {
+        user: { id: userId },
+        match: { state: "playing" }
+      },
+      relations: { questions: true }
+    })
+
+    if (!historic || historic.questions.length == 0)
+      throw new BadRequestException("User has no active match")
+
+    return historic.questions[historic.questions.length - 1]
+  }
+
 
   create(createHistoricDto: CreateHistoricDto) {
     return 'This action adds a new historic';
@@ -34,7 +49,7 @@ export class HistoricService {
     return this._hr.findOne({
       where: { id },
       relations: { questions: true }
-     })
+    })
   }
 
   update(id: number, updateHistoricDto: UpdateHistoricDto) {
@@ -46,7 +61,7 @@ export class HistoricService {
   }
 
   async removeAll(historics: Historic[]) {
-    for(let h of historics) 
+    for (let h of historics)
       await this._hr.delete(h.id)
 
     return true
