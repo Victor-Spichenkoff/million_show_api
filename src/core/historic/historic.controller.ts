@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards } from '@nestjs/common';
 import { HistoricService } from './historic.service';
 import { CreateHistoricDto } from './dto/create-historic.dto';
 import { UpdateHistoricDto } from './dto/update-historic.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('historic')
 export class HistoricController {
   constructor(private readonly historicService: HistoricService) {}
@@ -11,6 +15,11 @@ export class HistoricController {
   // create(@Body() createHistoricDto: CreateHistoricDto) {
   //   return this.historicService.create(createHistoricDto);
   // }
+
+  @Get("/last")
+  async getlastMatchData(@Request() req) {
+    return await this.historicService.getLastMatch(+req.user.id)
+  }
 
   @Get()
   findAll() {

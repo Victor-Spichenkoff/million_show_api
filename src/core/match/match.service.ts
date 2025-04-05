@@ -11,6 +11,7 @@ import { formatToCompleteNormalTime } from 'helpers/time'
 import { AnswerIndex } from 'types/indexs'
 import { QuestionService } from '../question/question.service'
 import { AnswerReponse } from 'types/reponses'
+
 @Injectable()
 export class MatchService {
     constructor(
@@ -33,6 +34,7 @@ export class MatchService {
         if (!currentMatch)
             throw new BadRequestException("User has no active match")
 
+
         if (currentMatch.questionState == "answered")
             throw new BadRequestException("User already responded to last question. Order a new one at /match/next")
 
@@ -44,6 +46,7 @@ export class MatchService {
         //erroU ?
         if (answerIndex != lastQuestion.answerIndex) {
             currentMatch.state = 'lost'
+            currentMatch.questionState = 'answered'
             
             const prizes = getCurrentPrizes(currentMatch.questionIndex)
 
@@ -80,8 +83,7 @@ export class MatchService {
     /*
     Vai apenas devolver uma nova quest random
     */
-    async getNext(userId: number, isEn = false) {
-        console.log("isEn ", isEn)
+    async getNext(userId: number, isEn = false) {''
         const user = await this._userService.findOne(userId, true)
 
         const currentMatch = giveCurrentMatchOrThrow(user?.matchs)

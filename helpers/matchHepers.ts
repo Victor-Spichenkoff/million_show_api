@@ -1,5 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { Match } from "models/match.model";
+import { MatchValidator } from "types/matchValidator";
 import { Prizes } from "types/prizes";
 
 export const isAlreadyStarted = (matchs: Match[]): false | Match[] => {
@@ -74,3 +75,18 @@ export const getLevelByQuetionIndex = (questionIndex: number) => {
 
     return 3
 }
+
+
+/**
+ * 
+ * * configura se deve jogar erro
+ * @param param1
+ * * is... -> deve ser igual a aquilo, ou erro
+ */
+export const validateMatch =(match: Match, 
+    {hasSkip, isWaiting}: MatchValidator) => {
+    if (hasSkip && match.skips == 0)
+        throw new BadRequestException("You don't have more skips!")
+    if(isWaiting && match.questionState != "wating") 
+        throw new BadRequestException("Question already answered")
+} 

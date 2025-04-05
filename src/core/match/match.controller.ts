@@ -12,7 +12,10 @@ import { plainToInstance } from 'class-transformer';
 @UseGuards(JwtAuthGuard)
 @Controller('match')
 export class MatchController {
-  constructor(private readonly matchService: MatchService) { }
+  constructor(
+    private readonly matchService: MatchService,
+
+  ) { }
 
 
   @ApiQuery({ name: "force", required: false, type: Boolean, example: "" })
@@ -47,6 +50,8 @@ export class MatchController {
   async getCurrentData(@Request() req) {
     return await this.matchService.getCurrentMatch(+req.user.id)
   }
+
+
 
 
   @Get("/current/question")

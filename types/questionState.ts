@@ -1,1 +1,1 @@
-export type QuestionState = "wating" | "answered"
+export type QuestionState = "wating" | "answered" 

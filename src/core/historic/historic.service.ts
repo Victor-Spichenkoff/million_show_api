@@ -11,6 +11,17 @@ export class HistoricService {
     @InjectRepository(Historic) private readonly _hr: Repository<Historic>,
   ) { }
 
+
+  async getLastMatch(userId: number) {
+    return (await this._hr.find({
+      where: { user: { id: userId } },
+      take: 1,
+      order: { id: "DESC" },
+      relations: { match: true }
+    }))[0]
+  }
+
+
   create(createHistoricDto: CreateHistoricDto) {
     return 'This action adds a new historic';
   }
