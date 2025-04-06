@@ -2,6 +2,8 @@ import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { HintService } from './hint.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetQuestionDto } from '../match/dto/getQuestion.dto';
+import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -17,5 +19,10 @@ export class HintController {
   @Get("/universitary") 
   async getUniversitaryHelp(@Request() req){
     return await this.hintService.universitary(+req.user.id)
+  }
+  @Get("/half") 
+  async getHalfQuestion(@Request() req){
+    const question = await this.hintService.halfHalf(+req.user.id)
+    return  plainToInstance(GetQuestionDto, question)
   }
 }

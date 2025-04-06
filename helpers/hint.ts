@@ -1,30 +1,52 @@
 import { AnswerIndex } from "types/indexs"
 import { getRandomIntInclusive } from "./numeric"
+import { Question } from "models/question.model"
 
 
 const lastIndex = 4
+
+
+export const getHalfQuestion = (question: Question) => {
+    let remanings: number[] = [question.answerIndex]
+    while (true) {
+        const wrongIndex = getRandomIntInclusive(1, lastIndex)
+        if (wrongIndex != question.answerIndex) {
+            remanings.push(wrongIndex)
+            break
+        }
+    }
+
+    [1, 2, 3, 4].forEach(index => {
+        if (!remanings.includes(index)) {
+            question[`option${index}`] = "X"
+        }
+    })
+
+    return question
+}
+
 
 export const getUniversitaryAnswer = (answerIndex: AnswerIndex, successProb): UnivertiraryAnswer => {
     let finalIndex = answerIndex
     const res = new UnivertiraryAnswer()
     let mainPercent = getRandomIntInclusive(79, 99)
-    
+
     let hasDoubt = false//ser tipo 30/40 em duas
     if (successProb < 3) {// realmente para trolar
         finalIndex = getIncorrectAnwer(answerIndex)
     } else if (successProb < 13) {// meio indeciso
         finalIndex = getIncorrectAnwer(answerIndex)
         mainPercent = getRandomIntInclusive(30, 60)
-        hasDoubt = true 
+        hasDoubt = true
     }// já é sucesso
-    
+
     const remanings = getRemaningsProbs(mainPercent, hasDoubt)
-    res[`option${finalIndex}`] = mainPercent 
+    res[`option${finalIndex}`] = mainPercent
 
 
     let i = 0
     for (let key of Object.keys(res)) {
-        if (res[key] == 0){ // não é o main
+        if (res[key] == 0) { // não é o main
             res[key] = remanings[i]
             i += 1
         }
