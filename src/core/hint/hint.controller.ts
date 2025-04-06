@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { HintService } from './hint.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -12,5 +12,10 @@ export class HintController {
   @Get("/skip")
   async skipQuestion(@Request() req) {
     return await this.hintService.skip(+req.user.id)
+  }
+
+  @Get("/universitary") 
+  async getUniversitaryHelp(@Request() req){
+    return await this.hintService.universitary(+req.user.id)
   }
 }

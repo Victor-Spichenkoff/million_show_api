@@ -5,7 +5,6 @@ import { HintModule } from 'src/core/hint/hint.module';
 import { QuestionModule } from 'src/core/question/question.module';
 import { MatchModule } from 'src/core/match/match.module';
 import { HistoricModule } from 'src/core/historic/historic.module';
-import { AppModule } from 'src/app.module';
 
 @Module({
   imports: [

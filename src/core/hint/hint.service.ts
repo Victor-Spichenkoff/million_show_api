@@ -7,6 +7,7 @@ import { User } from 'models/user.model';
 import { giveCurrentMatchOrThrow, validateMatch } from 'helpers/matchHepers';
 import { HistoricService } from '../historic/historic.service';
 import { getRandomIntInclusive } from 'helpers/numeric';
+import { getUniversitaryAnswer } from 'helpers/hint';
 
 @Injectable()
 export class HintService {
@@ -44,14 +45,29 @@ export class HintService {
     }
 
 
-    async univertiraty(userId: number) {
-        const isSuccessProbability = getRandomIntInclusive(1, 100)
-
-        const question = await this.historicService.getCurrentQuestion(userId)
+    async universitary(userId: number) {
+        const successProbability = getRandomIntInclusive(1, 100)
         const match = await this.getCurrentMatch(userId)
 
+        if (match.hintState != "none" && match.hintState != "univertitary")
+            throw new BadRequestException("Question already hinted")
 
+        const question = await this.historicService.getCurrentQuestion(userId)
 
+        const universiraryRes = getUniversitaryAnswer(question.answerIndex, successProbability)
+
+        if (match.hintState == "none") {
+            if (match.universitary == 0)
+                throw new BadRequestException("You don't have more of this help")
+            match.universitary -= 1
+            match.hintState = "univertitary"
+        } else {
+            match.hintState = "none"
+        }
+
+        await this._matchRepo.update(match.id, match)
+
+        return universiraryRes
     }
 
 

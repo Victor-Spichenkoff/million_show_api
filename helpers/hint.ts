@@ -6,20 +6,29 @@ const lastIndex = 4
 
 export const getUniversitaryAnswer = (answerIndex: AnswerIndex, successProb): UnivertiraryAnswer => {
     let finalIndex = answerIndex
-    let mainProb = getRandomIntInclusive(79, 99)
+    const res = new UnivertiraryAnswer()
+    let mainPercent = getRandomIntInclusive(79, 99)
+    
     let hasDoubt = false//ser tipo 30/40 em duas
     if (successProb < 3) {// realmente para trolar
         finalIndex = getIncorrectAnwer(answerIndex)
     } else if (successProb < 13) {// meio indeciso
-        mainProb = getRandomIntInclusive(30, 60)
-        hasDoubt = true
+        finalIndex = getIncorrectAnwer(answerIndex)
+        mainPercent = getRandomIntInclusive(30, 60)
+        hasDoubt = true 
+    }// já é sucesso
+    
+    const remanings = getRemaningsProbs(mainPercent, hasDoubt)
+    res[`option${finalIndex}`] = mainPercent 
+
+
+    let i = 0
+    for (let key of Object.keys(res)) {
+        if (res[key] == 0){ // não é o main
+            res[key] = remanings[i]
+            i += 1
+        }
     }
-
-    const remanings = getRemaningsProbs(mainProb,)
-    const res = new UnivertiraryAnswer()
-
-    // formatar e colocar as porcentages
-    // deve ser um for usando as key
 
     return res
 }
@@ -34,31 +43,43 @@ const getIncorrectAnwer = (correctIndex: AnswerIndex): AnswerIndex => {
 }
 
 
-const getRemaningsProbs = (baseProb: number, hasDoubt = false): number[] => {
-    while (true) {
-        let total = baseProb
+const getRemaningsProbs = (basePercent: number, hasDoubt = false): number[] => {
+    for (let i = 0; i < 10; i++) {
+        let total = basePercent
         let doubtPercent = 0
         if (hasDoubt) {
             doubtPercent = getRandomIntInclusive(25, 100 - total)
+            total += doubtPercent
         } else {// é normal
-            console.log("total: " + total)
-            doubtPercent = getRandomIntInclusive(0, 100 - total)
+            doubtPercent = getRandomIntInclusive(0, 95 - total) ?? 0
+            // doubtPercent = getRandomIntInclusive(0, 100 - total) ?? 0
+            total += doubtPercent
         }
 
-        const remaningPercents1 = getRandomIntInclusive(0, 100 - total) ?? 0
+        const remaningPercents1 = getRandomIntInclusive(0, 97 - total) ?? 0
         total += remaningPercents1
 
         const lastPercent = getRandomIntInclusive(0, 100 - total) ?? 0
 
-
         const resNotOrdened = [doubtPercent, remaningPercents1, lastPercent]
 
-        if (total == 100) {
-            return unSortRemaning(resNotOrdened)
+
+        if (total == 100 && !hasNegative(resNotOrdened)) {
+            return resNotOrdened
+            // return unSortRemaning(resNotOrdened)
         }
     }
+    // emergencia
+    let n1 = getRandomIntInclusive(0, 100 - basePercent)
+    let n2 = getRandomIntInclusive(0, 100 - n1 - basePercent)
+    let n3 = 100 - n2 - n1 - basePercent
 
+    return unSortRemaning([n1, n2, n3])
+}
 
+const hasNegative = (nums: number[]) => {
+    const result = nums.map((n) => n < 0)
+    return result.includes(true)
 }
 
 const unSortRemaning = (sortedRes: number[]) => {
@@ -85,8 +106,3 @@ class UnivertiraryAnswer {
     option3: number = 0
     option4: number = 0
 }
-
-// getUniversitaryAnswer(1, 60)
-// TODO -> tá vindo bugado, sempre 10 e não respeta o 100
-const baseProb = 90
-console.log([... getRemaningsProbs(baseProb, false), baseProb])

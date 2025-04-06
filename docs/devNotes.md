@@ -6,6 +6,11 @@
 
 # Mudei para 1 - 4 para o answer index
 
+# Se pedir univesitary
+- Salva e permite repedir na mesma question, mas vai retornar random
+- Criar db se quiser salvar a res ou não permitir repegar a dica
+- Mas coloquei pegadinha, se pedir mais de 2, zera as dicas
+
 # Não vou colocar os prize, modificar no frontend com as respectivas conversões
 
 # Question
@@ -21,3 +26,5 @@
 
 # To Insert basic questions (121)
 - Run ````yarn seed````, or ````npm run seed````
+
+
