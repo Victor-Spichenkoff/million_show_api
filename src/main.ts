@@ -11,6 +11,7 @@ async function bootstrap() {
   const port = process.env.PORT ?? 3000
   configureSwagger(app)
 
+  // to use short error message:
   // app.useGlobalFilters(new ShortErrorFilter())
   app.useGlobalFilters(new CustomBadRequestFilter())
   app.useGlobalPipes(new ValidationPipe(PipeValidationConfig))

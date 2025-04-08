@@ -1,5 +1,4 @@
-# Commom exit
-- Short 
+# Short exit
 - Use the erroe filter inside global/shortErrorFilter
 ```
 {
@@ -9,7 +8,7 @@
 }
 ```
 
-# Ultra exit
+# Full exit
 
 ```
 {
