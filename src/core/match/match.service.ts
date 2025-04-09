@@ -11,6 +11,7 @@ import { formatToCompleteNormalTime } from 'helpers/time'
 import { AnswerIndex } from 'types/indexs'
 import { QuestionService } from '../question/question.service'
 import { AnswerReponse } from 'types/reponses'
+import { HistoricHelper } from 'src/helpers/historicHelper.service'
 
 @Injectable()
 export class MatchService {
@@ -18,7 +19,8 @@ export class MatchService {
         @InjectRepository(Match) private readonly _matchRepo: Repository<Match>,
         @InjectRepository(Historic) private readonly _historyRepo: Repository<Historic>,
         private readonly _userService: UserService,
-        private readonly _questionService: QuestionService
+        private readonly _questionService: QuestionService,
+        private readonly _historicHelperService: HistoricHelper
     ) { }
 
 
@@ -30,7 +32,7 @@ export class MatchService {
         })
 
         // const currentMatch = giveCurrentMatch(user?.matchs)
-        
+
         if (!currentMatch)
             throw new BadRequestException("User has no active match")
 
@@ -47,7 +49,7 @@ export class MatchService {
         if (answerIndex != lastQuestion.answerIndex) {
             currentMatch.state = 'lost'
             currentMatch.questionState = 'answered'
-            
+
             const prizes = getCurrentPrizes(currentMatch.questionIndex)
 
             await this._historyRepo.update(
@@ -83,7 +85,8 @@ export class MatchService {
     /*
     Vai apenas devolver uma nova quest random
     */
-    async getNext(userId: number, isEn = false) {''
+    async getNext(userId: number, isEn = false) {
+        ''
         const user = await this._userService.findOne(userId, true)
 
         const currentMatch = giveCurrentMatchOrThrow(user?.matchs)
@@ -104,7 +107,7 @@ export class MatchService {
                 user: { id: userId },
             })
 
-        const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel,isEn)
+        const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel, isEn)
 
 
         if (!currentHistoric.questions)
@@ -154,6 +157,9 @@ export class MatchService {
     async create(createMatchDto: CreateMatchDto, userId: number, force = false) {
         const user = await this._userService.findOne(userId, true)
         if (!user) throw new BadRequestException("User doesn't exist")
+
+        // limpar historic
+        await this._historicHelperService.deleteExtraHistorics(userId)
 
         // já iniciada
         const alreadyStartedMatch = isAlreadyStarted(user.matchs)
@@ -214,6 +220,9 @@ export class MatchService {
 
     async setManyToCancelled(matchs: Match[]) {
         for (let match of matchs) {
+            this._historyRepo.update({
+                match: { id: match.id }
+            }, { finishDate: Number(new Date()) })
             match.state = "cancelled"
             await this._matchRepo.update(match.id, match)
         }

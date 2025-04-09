@@ -8,12 +8,12 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class HistoricService {
   constructor(
-    @InjectRepository(Historic) private readonly _hr: Repository<Historic>,
+    @InjectRepository(Historic) private readonly _historicRepo: Repository<Historic>,
   ) { }
 
 
   async getLastMatch(userId: number) {
-    return (await this._hr.find({
+    return (await this._historicRepo.find({
       where: { user: { id: userId } },
       take: 1,
       order: { id: "DESC" },
@@ -22,7 +22,7 @@ export class HistoricService {
   }
 
   async getCurrentQuestion(userId: number) {
-    const historic = await this._hr.findOne({
+    const historic = await this._historicRepo.findOne({
       where: {
         user: { id: userId },
         match: { state: "playing" }
@@ -42,11 +42,11 @@ export class HistoricService {
   }
 
   findAll() {
-    return this._hr.find({ relations: { questions: true } })
+    return this._historicRepo.find({ relations: { questions: true } })
   }
 
   findOne(id: number) {
-    return this._hr.findOne({
+    return this._historicRepo.findOne({
       where: { id },
       relations: { questions: true }
     })
@@ -62,7 +62,7 @@ export class HistoricService {
 
   async removeAll(historics: Historic[]) {
     for (let h of historics)
-      await this._hr.delete(h.id)
+      await this._historicRepo.delete(h.id)
 
     return true
   }

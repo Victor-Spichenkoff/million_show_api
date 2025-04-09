@@ -12,14 +12,14 @@ import { Match } from 'models/match.model';
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User) private readonly _ur: Repository<User>,
+        @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Match) private readonly _matchRepo: Repository<Match>,
         private readonly historicService: HistoricService,
     ) {}
 
 
     async cleanHistoric(userId: number) {
-        const user = await this._ur.findOne({
+        const user = await this.userRepo.findOne({
             where: { id: userId },
             relations: { historic: true, matchs: true }
         })
@@ -40,11 +40,11 @@ export class UserService {
     }
 
     findAll() {
-        return this._ur.find();
+        return this.userRepo.find();
     }
 
     findOne(id: number, includeMatch = false) {
-        return this._ur.findOne({ 
+        return this.userRepo.findOne({ 
             where: { id }, 
             relations: { 
                 historic: true, matchs: includeMatch
@@ -56,14 +56,14 @@ export class UserService {
         if (updateUserDto.password)
             updateUserDto.password = await hashPassword(updateUserDto.password)
 
-        return await this._ur.update(id, updateUserDto)
+        return await this.userRepo.update(id, updateUserDto)
     }
 
     remove(id: number) {
-        return this._ur.delete(id)
+        return this.userRepo.delete(id)
     }
 
     async finUserByUserName(userName: string) {
-        return await this._ur.findOne({ where: { userName } })
+        return await this.userRepo.findOne({ where: { userName } })
     }
 }

@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt'
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectRepository(User) private readonly _ur: Repository<User>,
+        @InjectRepository(User) private readonly _userRepo: Repository<User>,
         private readonly jwtService: JwtService,
         private readonly userService: UserService) { }
 
@@ -22,7 +22,7 @@ export class AuthService {
         createAuthDto.password = await hashPassword(createAuthDto.password)
 
         try {
-            const finalUser = await this._ur.save(createAuthDto)
+            const finalUser = await this._userRepo.save(createAuthDto)
             return finalUser.userName
         } catch (error) {
             if (error.code === "SQLITE_CONSTRAINT" || error.code === "23505")

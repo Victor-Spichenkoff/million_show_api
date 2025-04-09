@@ -8,7 +8,7 @@ import { Historic } from 'models/historic.model';
 
 @Injectable()
 export class QuestionService {
-    constructor(@InjectRepository(Question) private readonly _qr: Repository<Question>) { }
+    constructor(@InjectRepository(Question) private readonly _questionRepo: Repository<Question>) { }
 
 
     async getNewQuestionFiltered(userHistoric: Historic[], level: 1 | 2 | 3, isEn: boolean) {
@@ -21,7 +21,7 @@ export class QuestionService {
                 for (let question of historic.questions)
                     questionsIds.push(question.id)
 
-        const randomQuestion = await this._qr.createQueryBuilder("question")
+        const randomQuestion = await this._questionRepo.createQueryBuilder("question")
             .where("question.id NOT IN (:...questionsIds)", { questionsIds })
             .andWhere("question.level = :level", { level })
             .andWhere("question.isBr != :isEn", { isEn })
@@ -31,7 +31,7 @@ export class QuestionService {
         if(randomQuestion != null)
             return randomQuestion
 
-        const secondTry = await this._qr.createQueryBuilder("question")
+        const secondTry = await this._questionRepo.createQueryBuilder("question")
             .where("question.level = :level", { level })
             .andWhere("question.isBr != :isEn", { isEn })
             .orderBy("RANDOM()")
@@ -44,29 +44,29 @@ export class QuestionService {
     }
 
     async create(createQuestionDto: CreateQuestionDto) {
-        return await this._qr.save(createQuestionDto)
+        return await this._questionRepo.save(createQuestionDto)
     }
 
     async findPaged(page = 0, skip = 10) {
-        return await this._qr.find({
+        return await this._questionRepo.find({
             skip: page * skip,
             take: skip,
         })
     }
 
     async findAll() {
-        return await this._qr.find()
+        return await this._questionRepo.find()
     }
 
     async findOne(id: number) {
-        return await this._qr.findOneBy({ id })
+        return await this._questionRepo.findOneBy({ id })
     }
 
     async update(id: number, updateQuestionDto: UpdateQuestionDto) {
-        return await this._qr.update(id, updateQuestionDto)
+        return await this._questionRepo.update(id, updateQuestionDto)
     }
 
     async remove(id: number) {
-        return await this._qr.delete(id)
+        return await this._questionRepo.delete(id)
     }
 }

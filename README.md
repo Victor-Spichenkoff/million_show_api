@@ -27,4 +27,12 @@
 <ul>
   <li>The help <strong>universitaries</strong> has a 13% chance of fail, and a 2% of fail extremely</li>
   <li>Run <code>yarn seed</code> to seed the db with over 200 question</li>
+  <li> You can check a few more notes in docs/myNotes, it's what a had used to built the api. It's all in portuguese
+</ul>
+
+
+<h1>Deploy</h1>
+<ul>
+    <li> The api uses a local db, with sqlite. It's make the deploy much easier
+    <li> The feature of clean historic are used at each historic create, due to many limitations in free plans
 </ul>

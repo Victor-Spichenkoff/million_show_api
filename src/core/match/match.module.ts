@@ -6,10 +6,11 @@ import { Historic } from 'models/historic.model';
 import { Match } from 'models/match.model';
 import { UserModule } from '../user/user.module';
 import { QuestionModule } from '../question/question.module';
+import { HelpersModule } from 'src/helpers/helpers.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Match, Historic]), UserModule, QuestionModule],
+  imports: [TypeOrmModule.forFeature([Match, Historic]), UserModule, QuestionModule, HelpersModule],
   controllers: [MatchController],
   providers: [MatchService],
 })
