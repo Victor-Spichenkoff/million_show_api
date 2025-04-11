@@ -35,11 +35,13 @@ export class AuthService {
 
     async login(user: User) {
         const payload = { sub: user.id, userName: user.userName };
+
         return {
             ...user,
             access_token: this.jwtService.sign(payload, {
                 expiresIn: "1d"
             }),
+            expires_in: 60 * 60 * 24//frontend use it as seconds
         }
     }
 

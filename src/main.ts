@@ -16,6 +16,14 @@ async function bootstrap() {
   app.useGlobalFilters(new CustomBadRequestFilter())
   app.useGlobalPipes(new ValidationPipe(PipeValidationConfig))
 
+  app.enableCors({
+    origin: [
+        process.env.NODE_ENV === 'development' && 'http://localhost:3000',
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+  })
+
   await app.listen(port)
   console.log("Rodando em: http://localhost:" + port + "/swagger")
 }

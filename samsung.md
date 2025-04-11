@@ -14,3 +14,8 @@ Aguardo contato em meu e-mail.
 
 Atenciosamente,
 Victor Spichenkoff
+
+
+
+
+https://huggingface.co/spaces/stabilityai/stable-diffusion
