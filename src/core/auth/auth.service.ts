@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException, } from '@nestjs/common'
 import { SignInDto } from './dto/signin.dto'
 import { SignupDto } from './dto/signup.dto'
 import { Repository } from 'typeorm'
@@ -52,6 +52,6 @@ export class AuthService {
             const { password, ...result } = user
             return result
         }
-        throw new UnauthorizedException('Invalid Creadentials')
+        throw new BadRequestException('Invalid Creadentials')
     }
 }
