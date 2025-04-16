@@ -1,6 +1,8 @@
 # TO DO
-- Logica dicas
-- Locia de apagar histircos extras. Ver se colocar ao responder também
+
+
+# São 15 rodas e mais 1 com o premio final ou nada
+
 
 # Só criar historic ao terminar mesmo
 

@@ -14,6 +14,9 @@ export class Match {
   @Column({ default: "playing" })
   state: States = "playing"
 
+  @CreateDateColumn()
+  startedAt: Date
+
   // hint
   @Column({ default: "none" })
   hintState: HintState = "none"
@@ -31,7 +34,7 @@ export class Match {
   questionIndex: number = 0
 
   @CreateDateColumn()
-  startDate: Date
+  startDate: number
 
   @Column({ default: 0 })
   wrongPrize: number = 0

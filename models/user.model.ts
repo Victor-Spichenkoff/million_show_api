@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Historic } from './historic.model';
-import { Match } from './match.model';
+import { Match } from './match.model'
+import {Point} from "./points.model";
 
 @Entity()
 export class User {
@@ -18,4 +19,7 @@ export class User {
 
   @OneToMany(()=> Match, (m) => m.user)
   matchs: Match[]
+
+  @OneToMany(()=> Point, (p) => p.user)
+  points: Point[]
 }
