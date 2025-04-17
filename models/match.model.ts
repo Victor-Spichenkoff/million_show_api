@@ -14,9 +14,6 @@ export class Match {
   @Column({ default: "playing" })
   state: States = "playing"
 
-  @CreateDateColumn()
-  startedAt: Date
-
   // hint
   @Column({ default: "none" })
   hintState: HintState = "none"

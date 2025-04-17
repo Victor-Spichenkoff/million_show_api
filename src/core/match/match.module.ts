@@ -7,10 +7,16 @@ import { Match } from 'models/match.model';
 import { UserModule } from '../user/user.module';
 import { QuestionModule } from '../question/question.module';
 import { HelpersModule } from 'src/helpers/helpers.module';
-
+import { PointsModule } from '../points/points.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Match, Historic]), UserModule, QuestionModule, HelpersModule],
+  imports: [
+    TypeOrmModule.forFeature([Match, Historic]),
+    UserModule,
+    QuestionModule,
+    HelpersModule,
+    PointsModule,
+  ],
   controllers: [MatchController],
   providers: [MatchService],
 })

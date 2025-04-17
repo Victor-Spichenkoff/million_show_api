@@ -12,6 +12,7 @@ import { AnswerIndex } from 'types/indexs'
 import { QuestionService } from '../question/question.service'
 import { AnswerReponse } from 'types/reponses'
 import { HistoricHelper } from 'src/helpers/historicHelper.service'
+import {PointsService} from "../points/points.service";
 
 @Injectable()
 export class MatchService {
@@ -20,6 +21,7 @@ export class MatchService {
         @InjectRepository(Historic) private readonly _historyRepo: Repository<Historic>,
         private readonly _userService: UserService,
         private readonly _questionService: QuestionService,
+        private readonly _pointsService: PointsService,
         private readonly _historicHelperService: HistoricHelper
     ) { }
 
@@ -64,21 +66,63 @@ export class MatchService {
             // await this._matchRepo.update(currentMatch.id, currentMatch)
 
             const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
+
+            // save match points
+            const pointInfos = await this._pointsService.savePointsToPlayer(userId, currentMatch, prizes.wrongPrize)
+
             return {
                 isCorrect: false,
                 correctAnswer: correctOption,
-                finalPrize: prizes.wrongPrize
+                finalPrize: prizes.wrongPrize,
+                points: pointInfos.points
             }
             // return `Wrong! \nThe answer was ${correctOption} \nYou won $${prizes.wrongPrize}`
         }
 
+
         //acertou
+
         currentMatch.hintState = "none"
         currentMatch.questionState = "answered"
 
-        this._matchRepo.save(currentMatch)
+
+        // foi milhão
+        if(currentMatch.questionIndex == 15) {
+            currentMatch.state = "won"
+            await this._matchRepo.save(currentMatch)
+            const pointsInfo = await this._pointsService.savePointsToPlayer(userId, currentMatch, 1_000_000)
+
+            return {
+                isCorrect: true,
+                points: pointsInfo.points,
+            }
+        }
+
+
+        await this._matchRepo.save(currentMatch)
         return {
             isCorrect: true,
+        }
+    }
+
+
+    async stop(userId: number) {
+        const match = await  this.getCurrentMatch(userId)
+        if (!match)
+            throw new BadRequestException("User has no active match")
+
+        if(match.state != "playing")
+            throw new BadRequestException("You can only stop a playing match")
+
+        const prizes = getCurrentPrizes(match.questionIndex)
+
+        await this._matchRepo.update(match.id, { state: 'stopped' })
+        const pointsInfo = await this._pointsService.savePointsToPlayer(userId, match, prizes.stopPrize)
+
+
+        return {
+            finalPrize: prizes.stopPrize,
+            points: pointsInfo.points,
         }
     }
 

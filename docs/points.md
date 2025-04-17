@@ -26,3 +26,5 @@
 
 
 ## Time 
+- you finish in less than one minute, the prize are 450 points
+- You must finish in less than 30 minutes to get some point by time

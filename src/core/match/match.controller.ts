@@ -18,6 +18,13 @@ export class MatchController {
   ) { }
 
 
+  @Post("/stop")
+  async stopMatch(@Request() req) {
+    await this.matchService.stop(+req.user.id)
+
+    return "You stop the match"
+  }
+
   @ApiQuery({ name: "force", required: false, type: Boolean, example: "" })
   @Post("/start")
   create(
@@ -34,7 +41,7 @@ export class MatchController {
     const question = await this.matchService.getNext(+req.user.id, isEn == "true")
 
     return plainToInstance(GetQuestionDto, question)
-  } 
+  }
 
 
   @Patch("/asnwer/:index")

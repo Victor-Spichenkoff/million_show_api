@@ -2,6 +2,8 @@ import { Match } from '../models/match.model';
 import { Historic } from '../models/historic.model';
 import { prizes } from './matchHepers';
 import { BadRequestException } from '@nestjs/common';
+import {Point} from "../models/points.model";
+import {User} from "../models/user.model";
 
 
 
@@ -19,10 +21,13 @@ export const getMatchPoints = (match: Match, finalPrize: number, now: number) =>
   let final = 0;
 
   final += getHintPoints(match);
+  console.log("Hint points: ", getHintPoints(match))
   final += getPointsByCorrectsWithFinalPrize(finalPrize)
+  console.log("Correct points: ", getPointsByCorrectsWithFinalPrize(finalPrize))
+  final += getPointsByTime(match.startDate, now)
+  console.log("Time points: ", getPointsByTime(match.startDate, now))
 
-
-  return final;
+  return final
 }
 
 
@@ -65,16 +70,53 @@ export const getPointsByCorrectsWithFinalPrize = (finalPrize: number) => {
 const getPointsByTime = (startTimeMs: number, endTimeMs: number) => {
   const diff = getDurationInMinutes(startTimeMs, endTimeMs)
 
-  return Math.round(Math.max(225 - diff * 7.5, 0))
+  return Math.round(Math.max(450 - diff * 15, 0))
 }
 
 const getDurationInMinutes = (startMs: number, endMs: number) => {
   return (endMs - startMs) / 1000 / 60
 }
 
-const start = Number(new Date()) - Number(new Date(1_000 * 60 * 15))//Tue Apr 15 2025 22:04:07 GMT-0300
-console.log(new Date(start).toString())
-console.log(getPointsByTime(start, Number(new Date())))
+
+// TEST AREA
+
+const savePointsToPlayer = (playerId: number, match: Match, finalPrize: number) => {
+  const point = new Point()
+  //pegar pontos
+  const pointInfo = getPointsInfo(match, finalPrize)
+  point.points = pointInfo.points
+  point.totalTime = pointInfo.duration
+  //dicas
+  point.skipsUsed = 2 - match.skips
+  point.univerUsed = 2 - match.universitary
+  point.halfUsed = 1 - match.halfHalf
+
+  point.corrects = match.questionState == "answered" ? match.questionIndex : Math.min(match.questionIndex - 1)
+  //
+  const user = new User()
+  user.id = playerId
+  point.user = user
+  return point//salvar aqui
+}
+
+const match: Match = {
+  "id": 20,
+  "state": "playing",
+  "hintState": "none",
+  "skips": 2,
+  "halfHalf": 1,
+  "universitary": 2,
+  "questionIndex": 1,
+  "startDate": Number(new Date("2025-04-09T14:24:41.000Z")),
+  "wrongPrize": 0,
+  "stopPrize": 0,
+  "nextPrize": 1000,
+  "questionState": "answered",
+  historic: new Historic()
+}
+
+console.log(savePointsToPlayer(1, match, 1_000))
+
 
 // for (let f of [...prizes, 1_000_000]) {
 //   console.log(`${f} -> ` + getTriangularWithPrizes(f));
