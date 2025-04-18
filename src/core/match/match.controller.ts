@@ -18,12 +18,7 @@ export class MatchController {
   ) { }
 
 
-  @Post("/stop")
-  async stopMatch(@Request() req) {
-    await this.matchService.stop(+req.user.id)
 
-    return "You stop the match"
-  }
 
   @ApiQuery({ name: "force", required: false, type: Boolean, example: "" })
   @Post("/start")
@@ -46,7 +41,7 @@ export class MatchController {
 
   @Patch("/asnwer/:index")
   async answer(@Param("index") index: AnswerIndex, @Request() req) {
-    return await this.matchService.aswerQuestion(+req.user.id, index)
+    return await this.matchService.answerQuestion(+req.user.id, index)
   }
 
 
@@ -65,6 +60,14 @@ export class MatchController {
   async getCurrentQuestion(@Request() req) {
     const question = await this.matchService.getCurrentQuestion(+req.user.id)
     return plainToInstance(GetQuestionDto, question)
+  }
+
+
+  @Post("/stop")
+  async stopMatch(@Request() req) {
+    await this.matchService.stop(+req.user.id)
+
+    return "You stop the match"
   }
 
 

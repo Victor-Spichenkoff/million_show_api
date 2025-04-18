@@ -1,20 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query} from '@nestjs/common';
 import { PointsService } from './points.service';
 import { CreatePointDto } from './dto/create-point.dto';
 import { UpdatePointDto } from './dto/update-point.dto';
+import {ApiBearerAuth, ApiQuery} from "@nestjs/swagger";
+import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
+
 
 @Controller('points')
 export class PointsController {
   constructor(private readonly pointsService: PointsService) {}
 
-  @Post()
-  create(@Body() createPointDto: CreatePointDto) {
-    return this.pointsService.create(createPointDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.pointsService.findAll();
+  @ApiQuery({ name: "page", required: false, type: Number, example: null })
+  @ApiQuery({ name: "take", required: false, type: Number, example: null })
+  @Get("/leaderboard/points")
+  create(@Query("page") page: number, @Query("take") take?: number) {
+    return this.pointsService.getLeaderBoardByPoints(page, take)
   }
 
   @Get(':id')

@@ -1,58 +1,62 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePointDto } from './dto/create-point.dto';
 import { UpdatePointDto } from './dto/update-point.dto';
-import {Match} from "../../../models/match.model";
-import {Repository} from "typeorm";
-import {Point} from "../../../models/points.model";
-import {InjectRepository} from "@nestjs/typeorm";
-import {getPointsInfo} from "../../../helpers/points";
-import {User} from "../../../models/user.model";
+import { Match } from '../../../models/match.model';
+import { Repository } from 'typeorm';
+import { Point } from '../../../models/points.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { getPointsInfo } from '../../../helpers/points';
+import { User } from '../../../models/user.model';
 
 @Injectable()
 export class PointsService {
-    constructor(@InjectRepository(Point) private readonly pointRepo: Repository<Point>) {}
+  constructor(
+    @InjectRepository(Point) private readonly pointRepo: Repository<Point>,
+  ) {}
 
-    /*
-    * Give an final state match only. Just a second to be storage
-    * */
-    async savePointsToPlayer(playerId: number, match: Match, finalPrize: number){
-        const point = new Point()
-        //pegar pontos
-        const pointInfo = getPointsInfo(match, finalPrize)
-        point.points = pointInfo.points
-        point.totalTime = pointInfo.duration
-        //dicas
-        point.skipsUsed = 2 - match.skips
-        point.univerUsed = 2 - match.universitary
-        point.halfUsed = 1 - match.halfHalf
+  /*
+   * Give an final state match only. Just a second to be storage
+   * */
+  async savePointsToPlayer(playerId: number, match: Match, finalPrize: number) {
+    const point = new Point();
+    //pegar pontos
+    const pointInfo = getPointsInfo(match, finalPrize);
+    point.points = pointInfo.points;
+    point.totalTime = pointInfo.duration;
+    //dicas
+    point.skipsUsed = 2 - match.skips;
+    point.univerUsed = 2 - match.universitary;
+    point.halfUsed = 1 - match.halfHalf;
 
-        point.corrects = match.questionState == "answered" ? match.questionIndex : Math.min(match.questionIndex - 1)
-        //
-        const user = new User()
-        user.id = playerId
-        point.user = user
-        await this.pointRepo.save(point)
+    point.corrects =
+      match.questionState == 'answered'
+        ? match.questionIndex
+        : Math.max(match.questionIndex - 1, 0)
 
-        return point
-    }
+    const user = new User();
+    user.id = playerId;
+    point.user = user;
+    await this.pointRepo.save(point);
 
-    create(createPointDto: CreatePointDto) {
-        return 'This action adds a new point';
-    }
+    return point;
+  }
 
-    findAll() {
-        return `This action returns all points`;
-    }
+  async getLeaderBoardByPoints(page: number = 0, take: number = 12) {
+      return await this.pointRepo.find({
+      order: { points: 'desc' },
+      skip: page * take,
+      take,
+    });
+  }
 
-    findOne(id: number) {
-        return `This action returns a #${id} point`;
-    }
+  findOne(id: number) {
+    return `This action returns a #${id} point`;
+  }
 
-    update(id: number, updatePointDto: UpdatePointDto) {
-        return `This action updates a #${id} point`;
-    }
+  update(id: number, updatePointDto: UpdatePointDto) {
+    return `This action updates a #${id} point`;
+  }
 
-    remove(id: number) {
-        return `This action removes a #${id} point`;
-    }
+  remove(id: number) {
+    return this.pointRepo.delete(id)
+  }
 }

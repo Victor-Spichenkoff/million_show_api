@@ -26,7 +26,7 @@ export class MatchService {
     ) { }
 
 
-    async aswerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerReponse> {
+    async answerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerReponse> {
 
         const currentMatch = await this._matchRepo.findOne({
             where: { user: { id: userId }, state: "playing" },
@@ -43,14 +43,12 @@ export class MatchService {
             throw new BadRequestException("User already responded to last question. Order a new one at /match/next")
 
 
-
         const questions = currentMatch.historic.questions
         const lastQuestion = questions[questions.length - 1]
 
         //erroU ?
         if (answerIndex != lastQuestion.answerIndex) {
             currentMatch.state = 'lost'
-            currentMatch.questionState = 'answered'
 
             const prizes = getCurrentPrizes(currentMatch.questionIndex)
 
@@ -62,6 +60,7 @@ export class MatchService {
                     finalState: "lost",
                 }
             )
+            // currentMatch.questionState = 'answered'//to the points build
             await this._matchRepo.save(currentMatch)
             // await this._matchRepo.update(currentMatch.id, currentMatch)
 
@@ -86,7 +85,7 @@ export class MatchService {
         currentMatch.questionState = "answered"
 
 
-        // foi milhão
+        // It's million prize
         if(currentMatch.questionIndex == 15) {
             currentMatch.state = "won"
             await this._matchRepo.save(currentMatch)

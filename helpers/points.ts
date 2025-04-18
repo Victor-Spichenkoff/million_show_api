@@ -8,7 +8,6 @@ import {User} from "../models/user.model";
 
 
 export const getPointsInfo = (match: Match, finalPrize: number) => {
-
   const now = Number(new Date())
   const points = getMatchPoints(match, finalPrize, now)
   return {
@@ -20,12 +19,11 @@ export const getPointsInfo = (match: Match, finalPrize: number) => {
 export const getMatchPoints = (match: Match, finalPrize: number, now: number) => {
   let final = 0;
 
-  final += getHintPoints(match);
-  console.log("Hint points: ", getHintPoints(match))
+  if(match.questionIndex > 3)
+    final += getHintPoints(match);
   final += getPointsByCorrectsWithFinalPrize(finalPrize)
-  console.log("Correct points: ", getPointsByCorrectsWithFinalPrize(finalPrize))
-  final += getPointsByTime(match.startDate, now)
-  console.log("Time points: ", getPointsByTime(match.startDate, now))
+  if(match.state == "won")
+    final += getPointsByTime(match.startDate, now)
 
   return final
 }
@@ -81,41 +79,61 @@ const getDurationInMinutes = (startMs: number, endMs: number) => {
 // TEST AREA
 
 const savePointsToPlayer = (playerId: number, match: Match, finalPrize: number) => {
-  const point = new Point()
+  const point = new Point();
   //pegar pontos
-  const pointInfo = getPointsInfo(match, finalPrize)
-  point.points = pointInfo.points
-  point.totalTime = pointInfo.duration
+  const pointInfo = getPointsInfo(match, finalPrize);
+  point.points = pointInfo.points;
+  point.totalTime = pointInfo.duration;
   //dicas
-  point.skipsUsed = 2 - match.skips
-  point.univerUsed = 2 - match.universitary
-  point.halfUsed = 1 - match.halfHalf
+  point.skipsUsed = 2 - match.skips;
+  point.univerUsed = 2 - match.universitary;
+  point.halfUsed = 1 - match.halfHalf;
 
-  point.corrects = match.questionState == "answered" ? match.questionIndex : Math.min(match.questionIndex - 1)
-  //
-  const user = new User()
-  user.id = playerId
-  point.user = user
-  return point//salvar aqui
+  point.corrects =
+      match.questionState == 'answered'
+          ? match.questionIndex
+          : Math.max(match.questionIndex - 1, 0)
+
+  const user = new User();
+  user.id = playerId;
+  point.user = user;
+
+  return point;
 }
 
 const match: Match = {
-  "id": 20,
+  "id": 22,
   "state": "playing",
   "hintState": "none",
   "skips": 2,
   "halfHalf": 1,
   "universitary": 2,
-  "questionIndex": 1,
-  "startDate": Number(new Date("2025-04-09T14:24:41.000Z")),
+  "questionIndex": 0,
+  // "startDate":  Number(new Date("2025-04-09T14:24:41.000Z")),
+  "startDate": Number(new Date("2025-04-18T00:29:41.000Z")),
   "wrongPrize": 0,
   "stopPrize": 0,
   "nextPrize": 1000,
-  "questionState": "answered",
+  "questionState": "wating",
   historic: new Historic()
 }
+// const = match: Match = {
+//   "id": 20,
+//   "state": "playing",
+//   "hintState": "none",
+//   "skips": 2,
+//   "halfHalf": 1,
+//   "universitary": 2,
+//   "questionIndex": 1,
+//   "startDate": Number(new Date("2025-04-09T14:24:41.000Z")),
+//   "wrongPrize": 0,
+//   "stopPrize": 0,
+//   "nextPrize": 1000,
+//   "questionState": "answered",
+//   historic: new Historic()
+// }
 
-console.log(savePointsToPlayer(1, match, 1_000))
+console.log(savePointsToPlayer(0, match, 0))
 
 
 // for (let f of [...prizes, 1_000_000]) {

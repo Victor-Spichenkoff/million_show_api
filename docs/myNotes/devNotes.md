@@ -1,5 +1,5 @@
 # TO DO
-
+- Testar se está bom o questionIndex e relação com os correct no points
 
 # São 15 rodas e mais 1 com o premio final ou nada
 

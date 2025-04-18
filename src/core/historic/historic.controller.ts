@@ -17,7 +17,7 @@ export class HistoricController {
   // }
 
   @Get("/last")
-  async getlastMatchData(@Request() req) {
+  async getLastMatchData(@Request() req) {
     return await this.historicService.getLastMatch(+req.user.id)
   }
 
