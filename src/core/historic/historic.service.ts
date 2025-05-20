@@ -4,13 +4,50 @@ import { UpdateHistoricDto } from './dto/update-historic.dto';
 import { Historic } from 'models/historic.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { HomeInfos } from 'types/home';
+import {Point} from "../../../models/points.model";
+import {not} from "rxjs/internal/util/not";
 
 @Injectable()
 export class HistoricService {
   constructor(
     @InjectRepository(Historic) private readonly _historicRepo: Repository<Historic>,
+    @InjectRepository(Point) private readonly _pointsRepo: Repository<Point>,
   ) { }
 
+
+  async getHomeInfos(userId: number): Promise<HomeInfos> {
+    const historic = await this._historicRepo.find({
+      where: { user: { id: userId } }
+    })
+
+    if(historic.length != 0)
+    return {
+      points: "Not Started",
+      accumulatedPrizes: "none",
+      alreadyStarted: false,
+      correctAnswers: "0",
+      leaderBoardPosition: "Play first"
+    }
+
+  const pointsByUser = await this._pointsRepo.find({
+    where: { user: { id: userId } },
+    select: { points: true },
+  })
+
+    let points: string | number = "Not Started"
+    if(pointsByUser.length != 0)
+      points = pointsByUser.reduce((accumulator, current) => accumulator + current.points, 0)
+
+
+    return {
+      points,
+      accumulatedPrizes: "none",
+      alreadyStarted: false,
+      correctAnswers: "0",
+      leaderBoardPosition: "Let's get started?"
+    }
+  }
 
   async getLastMatch(userId: number) {
     return (await this._historicRepo.find({

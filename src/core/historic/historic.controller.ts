@@ -16,6 +16,14 @@ export class HistoricController {
   //   return this.historicService.create(createHistoricDto);
   // }
 
+  /**
+   * Infos about recent matchs from user
+   */
+  @Get("/home")
+  async getHomeInfos(@Request() req) {
+    return await this.historicService.getHomeInfos(+req.user.id)
+  }
+
   @Get("/last")
   async getLastMatchData(@Request() req) {
     return await this.historicService.getLastMatch(+req.user.id)
