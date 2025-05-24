@@ -75,11 +75,10 @@ export class MatchService {
                 finalPrize: prizes.wrongPrize,
                 points: pointInfos.points
             }
-            // return `Wrong! \nThe answer was ${correctOption} \nYou won $${prizes.wrongPrize}`
         }
 
 
-        //acertou
+        //correct
 
         currentMatch.hintState = "none"
         currentMatch.questionState = "answered"

@@ -4,4 +4,5 @@ export type HomeInfos = {
     correctAnswers: number | string
     accumulatedPrizes: number | string
     alreadyStarted: boolean
+    matchId: null | number
 }
