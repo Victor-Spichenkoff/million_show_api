@@ -14,7 +14,7 @@ export class PointsService {
   ) {}
 
   /*
-   * Give an final state match only. Just a second to be storage
+   * Give an final state match only. Just a second to be localStorage
    * */
   async savePointsToPlayer(playerId: number, match: Match, finalPrize: number) {
     const point = new Point();

@@ -39,7 +39,7 @@ export class AuthService {
         return {
             ...user,
             access_token: this.jwtService.sign(payload, {
-                expiresIn: "1d"
+                expiresIn: process.env.NODE_ENV == "development" ? "30d" : "1d"
             }),
             expires_in: 60 * 60 * 24//frontend use it as seconds
         }
