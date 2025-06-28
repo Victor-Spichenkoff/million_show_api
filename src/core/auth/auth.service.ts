@@ -52,6 +52,6 @@ export class AuthService {
             const { password, ...result } = user
             return result
         }
-        throw new BadRequestException('Invalid Creadentials')
+        throw new BadRequestException('Invalid Username or Password')
     }
 }

@@ -59,7 +59,7 @@ export class HintService {
         if (match.hintState == "none") {
             if (match.universitary == 0)
                 throw new BadRequestException("You don't have more of this help")
-            match.universitary -= 1
+            // match.universitary -= 1//TODO: DESCOMMENT
             match.hintState = "univertitary"
         } else {
             match.hintState = "none"
@@ -67,7 +67,7 @@ export class HintService {
 
         await this._matchRepo.update(match.id, match)
 
-        return universiraryRes
+        return {...universiraryRes, id: question.id }
     }
 
 
@@ -81,7 +81,7 @@ export class HintService {
         if (match.hintState == "none") {
             if (match.halfHalf == 0)
                 throw new BadRequestException("You don't have more of this help")
-            match.halfHalf -= 1
+            // match.halfHalf -= 1//TODO
             match.hintState = "half"
         } else {
             match.hintState = "none"
