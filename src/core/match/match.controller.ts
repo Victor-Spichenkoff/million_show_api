@@ -65,9 +65,7 @@ export class MatchController {
 
   @Post("/stop")
   async stopMatch(@Request() req) {
-    await this.matchService.stop(+req.user.id)
-
-    return "You stop the match"
+    return await this.matchService.stop(+req.user.id)
   }
 
 

@@ -128,7 +128,6 @@ export class MatchService {
     Vai apenas devolver uma nova quest random
     */
     async getNext(userId: number, isEn = false) {
-        ''
         const user = await this._userService.findOne(userId, true)
 
         const currentMatch = giveCurrentMatchOrThrow(user?.matchs)
