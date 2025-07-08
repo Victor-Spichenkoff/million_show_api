@@ -1,9 +1,9 @@
-export type AnswerReponse = {
+export type AnswerResponse = {
     isCorrect: true,
     points?: number
 } | {
     isCorrect: false,
     finalPrize: number
-    correctAnswer: string,
+    correctAnswer: number,
     points: number
 }

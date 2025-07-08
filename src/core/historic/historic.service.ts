@@ -41,7 +41,7 @@ export class HistoricService {
     if(pointsByUser.length != 0)
       points = pointsByUser.reduce((accumulator, current) => accumulator + current.points, 0)
 
-
+    //TODO: IMPLEMENT THE REST (show real infos, alreadyStarted, correctAnswers, poisition, ...)
     return {
       points,
       accumulatedPrizes: "none",

@@ -10,7 +10,7 @@ import { getCurrentPrizes, getLevelByQuetionIndex, giveCurrentMatchOrThrow, isAl
 import { formatToCompleteNormalTime } from 'helpers/time'
 import { AnswerIndex } from 'types/indexs'
 import { QuestionService } from '../question/question.service'
-import { AnswerReponse } from 'types/reponses'
+import { AnswerResponse } from 'types/reponses'
 import { HistoricHelper } from 'src/helpers/historicHelper.service'
 import {PointsService} from "../points/points.service";
 
@@ -26,25 +26,36 @@ export class MatchService {
     ) { }
 
 
-    async answerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerReponse> {
+    async answerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerResponse> {
+        //TODO: UNCOMMENT
+        // return {
+        //     isCorrect: true,
+        //     // points: 1200
+        // }
+
+        // return {
+        //     isCorrect: false,
+        //     correctAnswer: 2,
+        //     finalPrize: 12000,
+        //     points: 67
+        // }
 
         const currentMatch = await this._matchRepo.findOne({
             where: { user: { id: userId }, state: "playing" },
             relations: { historic: { questions: true } }
         })
 
-        // const currentMatch = giveCurrentMatch(user?.matchs)
-
         if (!currentMatch)
             throw new BadRequestException("User has no active match")
 
 
-        if (currentMatch.questionState == "answered")
-            throw new BadRequestException("User already responded to last question. Order a new one at /match/next")
+        if (currentMatch?.questionState == "answered")
+            throw new BadRequestException("User already responded to last question. Order a new one, please")
 
 
         const questions = currentMatch.historic.questions
-        const lastQuestion = questions[questions.length - 1]
+        // const lastQuestion = questions[questions.length - 1]//maybe trouble
+        const lastQuestion = questions[currentMatch.questionIndex - 1]
 
         //erroU ?
         if (answerIndex != lastQuestion.answerIndex) {
@@ -64,7 +75,8 @@ export class MatchService {
             await this._matchRepo.save(currentMatch)
             // await this._matchRepo.update(currentMatch.id, currentMatch)
 
-            const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
+            const correctOption = lastQuestion.answerIndex
+            // if want full text: const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
 
             // save match points
             const pointInfos = await this._pointsService.savePointsToPlayer(userId, currentMatch, prizes.wrongPrize)
@@ -79,7 +91,6 @@ export class MatchService {
 
 
         //correct
-
         currentMatch.hintState = "none"
         currentMatch.questionState = "answered"
 
@@ -114,13 +125,13 @@ export class MatchService {
 
         const prizes = getCurrentPrizes(match.questionIndex)
 
-        await this._matchRepo.update(match.id, { state: 'stopped' })
+        // await this._matchRepo.update(match.id, { state: 'stopped' })
         const pointsInfo = await this._pointsService.savePointsToPlayer(userId, match, prizes.stopPrize)
 
 
         return {
             finalPrize: prizes.stopPrize,
-            points: pointsInfo.points,
+            points: pointsInfo.points
         }
     }
 
@@ -138,7 +149,7 @@ export class MatchService {
         })
 
         if (currentMatch.questionState == "wating" && currentHistoric.questions.length > 0)
-            throw new BadRequestException("Answer the previous question first!")
+             throw new BadRequestException("Answer the previous question first!")
 
         //update historic and add question
         const newlevel = getLevelByQuetionIndex(currentMatch.questionIndex)
@@ -156,19 +167,24 @@ export class MatchService {
         else
             currentHistoric.questions.push(newQuestion)
 
+        console.log("CREATE:")
+        console.log(currentHistoric.questions)
+
+        await this._historyRepo.save(currentHistoric)
+
         //update currentMatch
         const currentPrizes = getCurrentPrizes(currentMatch.questionIndex)
         currentMatch.nextPrize = currentPrizes.nextPrize
         currentMatch.wrongPrize = currentPrizes.wrongPrize
         currentMatch.stopPrize = currentPrizes.stopPrize
-        currentMatch.questionIndex = currentHistoric.questions?.length ?? 0
+        currentMatch.questionIndex = currentHistoric.questions.length
         currentMatch.questionState = "wating"
         currentMatch.hintState = "none"
 
 
-        this._historyRepo.save(currentHistoric)
-        // this._historyRepo.update(currentHistoric.id, currentHistoric)
-        this._matchRepo.update(currentMatch.id, currentMatch)
+
+        // await this._historyRepo.update(currentHistoric.id, currentHistoric)
+        await this._matchRepo.update(currentMatch.id, currentMatch)
 
         return newQuestion
     }
@@ -186,6 +202,8 @@ export class MatchService {
         if (!currentHistoric?.questions || currentHistoric?.questions?.length < 1)
             throw new BadRequestException("Please get the new question at /match/next")
 
+        console.log("GET: ")
+        console.log(currentHistoric?.questions)
         return currentHistoric?.questions[currentHistoric.questions.length - 1]
     }
 

@@ -46,7 +46,7 @@ export const prizes = [0, 1_000, 2_000, 3_000, 4_000, 5_000,
 
 /** */
 export const getCurrentPrizes = (index: number): Prizes => {
-    if (index == 0)
+    if (index == 1)
         return {
             wrongPrize: 0,
             stopPrize: 0,

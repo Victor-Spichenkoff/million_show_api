@@ -39,7 +39,7 @@ export class MatchController {
   }
 
 
-  @Patch("/asnwer/:index")
+  @Patch("/answer/:index")
   async answer(@Param("index") index: AnswerIndex, @Request() req) {
     return await this.matchService.answerQuestion(+req.user.id, index)
   }

@@ -59,7 +59,7 @@ export class HintService {
         if (match.hintState == "none") {
             if (match.universitary == 0)
                 throw new BadRequestException("You don't have more of this help")
-            // match.universitary -= 1//TODO: DESCOMMENT
+            // match.universitary -= 1//TODO: UNCOMMENT
             match.hintState = "univertitary"
         } else {
             match.hintState = "none"
