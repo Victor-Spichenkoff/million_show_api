@@ -85,27 +85,19 @@ export class MatchService {
                 }
             )
             // currentMatch.questionState = 'answered'//to the points build
-            // await this._matchRepo.save(currentMatch)//TODO UNCOMMENT (just this line)
+            await this._matchRepo.save(currentMatch)
             // await this._matchRepo.update(currentMatch.id, currentMatch)
 
             const correctOption = lastQuestion.answerIndex
             // if want full text: const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
 
             // save match points
-            // TODO: UNCOMMENT
-            // const pointInfos = await this._pointsService.savePointsToPlayer(userId, currentMatch, prizes.wrongPrize)
-            // return {
-            //     isCorrect: false,
-            //     correctAnswer: correctOption,
-            //     finalPrize: prizes.wrongPrize,
-            //     points: pointInfos.points
-            // }
-
+            const pointInfos = await this._pointsService.savePointsToPlayer(userId, currentMatch, prizes.wrongPrize)
             return {
                 isCorrect: false,
                 correctAnswer: correctOption,
                 finalPrize: prizes.wrongPrize,
-                points: 12
+                points: pointInfos.points
             }
         }
 
@@ -116,7 +108,7 @@ export class MatchService {
 
 
         // It's million prize
-        if(currentMatch.questionIndex == 15) {
+        if(currentMatch.questionIndex == 16) {
             currentMatch.state = "won"
             await this._matchRepo.save(currentMatch)
             const pointsInfo = await this._pointsService.savePointsToPlayer(userId, currentMatch, 1_000_000)
@@ -177,12 +169,12 @@ export class MatchService {
         //update historic and add question
         const newlevel = getLevelByQuetionIndex(currentMatch.questionIndex)
 
-        const userHistoric = await this._historyRepo.findBy(
-            {
-                user: { id: userId },
-            })
 
-        const newQuestion = await this._questionService.getNewQuestionFiltered(userHistoric, newlevel, isEn)
+        const test= await this._historicQuestionRepo.find({
+            where: { historic: { user: { id: userId } } }
+        })
+
+        const newQuestion = await this._questionService.getNewQuestionFiltered(test, newlevel, isEn)
 
         const newHistoricQuestion = new HistoricQuestion()
         newHistoricQuestion.historic = currentHistoric
@@ -198,15 +190,16 @@ export class MatchService {
 
         // await this._historyRepo.save(currentHistoric)/TODO: CAHNGE
 
+        currentMatch.questionIndex += 1
+
         //update currentMatch
         const currentPrizes = getCurrentPrizes(currentMatch.questionIndex)
         currentMatch.nextPrize = currentPrizes.nextPrize
         currentMatch.wrongPrize = currentPrizes.wrongPrize
         currentMatch.stopPrize = currentPrizes.stopPrize
-        currentMatch.questionIndex = currentHistoric.questions.length
+        // currentMatch.questionIndex = currentHistoric.questions.length
         currentMatch.questionState = "wating"
         currentMatch.hintState = "none"
-
 
 
         // await this._historyRepo.update(currentHistoric.id, currentHistoric)
@@ -258,7 +251,7 @@ export class MatchService {
             const time = formatToCompleteNormalTime((new Date(alreadyStartedMatch[0].startDate)))
             throw new BadRequestException("You have already started a match at " + time + ". Please use /match/start?force=true")
         } else if (alreadyStartedMatch && force)
-            this.setManyToCancelled(alreadyStartedMatch)
+            await this.setManyToCancelled(alreadyStartedMatch)
 
 
         const newMatch = new Match()

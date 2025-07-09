@@ -39,7 +39,7 @@ export const giveCurrentMatchOrThrow = (matchs: Match[] | undefined) => {
 }
 
 
-export const prizes = [0, 1_000, 2_000, 3_000, 4_000, 5_000,
+export const prizes = [0, 0, 1_000, 2_000, 3_000, 4_000, 5_000,
     10_000, 20_000, 30_000, 40_000, 50_000,
     100_000, 200_000, 300_000, 400_000, 500_000 ]
 
@@ -53,7 +53,7 @@ export const getCurrentPrizes = (index: number): Prizes => {
             nextPrize: 1_000
         }
 
-    if (index == 15)
+    if (index == 16)
         return {
             wrongPrize: 0,
             stopPrize: 500_000,
@@ -81,7 +81,7 @@ export const getLevelByQuetionIndex = (questionIndex: number) => {
  *
  * * configura se deve jogar erro
  * @param param1
- * * is... -> deve ser igual a aquilo, ou erro
+ * * is... -> deve ser igual àquilo, ou erro
  */
 export const validateMatch =(match: Match,
     {hasSkip, isWaiting}: MatchValidator) => {
