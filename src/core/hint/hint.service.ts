@@ -33,7 +33,7 @@ export class HintService {
         })
 
         if (match.questionIndex >= 15)
-            throw new BadRequestException("You can't skip the Million Quest")
+            throw new BadRequestException("You can't skip the Million Question")
 
 
         match.skips -= 1
@@ -49,10 +49,12 @@ export class HintService {
         const successProbability = getRandomIntInclusive(1, 100)
         const match = await this.getCurrentMatch(userId)
 
+        if (match.questionIndex >= 15)
+            throw new BadRequestException("You can't use it in the Million Question")
         if (match.hintState != "none" && match.hintState != "univertitary")
             throw new BadRequestException("Question already hinted")
 
-        const question = await this.historicService.getCurrentQuestion(userId)
+        const question = await this.historicService.getCurrentQuestionByUserId(userId)
 
         const universiraryRes = getUniversitaryAnswer(question.answerIndex, successProbability)
 
@@ -73,15 +75,18 @@ export class HintService {
 
     async halfHalf(userId: number) {
         const match = await this.getCurrentMatch(userId)
-        const question = await this.historicService.getCurrentQuestion(userId)
 
+        if (match.questionIndex >= 15)
+            throw new BadRequestException("You can't use it in the Million Question")
         if (match.hintState != "none" && match.hintState != "half")
             throw new BadRequestException("Question already hinted")
+
+        const question = await this.historicService.getCurrentQuestionByUserId(userId)
 
         if (match.hintState == "none") {
             if (match.halfHalf == 0)
                 throw new BadRequestException("You don't have more of this help")
-            // match.halfHalf -= 1//TODO
+            match.halfHalf -= 1//TODO
             match.hintState = "half"
         } else {
             match.hintState = "none"

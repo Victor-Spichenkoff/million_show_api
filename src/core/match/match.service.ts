@@ -80,7 +80,6 @@ export class MatchService {
             )
             // currentMatch.questionState = 'answered'//to the points build
             await this._matchRepo.save(currentMatch)
-            // await this._matchRepo.update(currentMatch.id, currentMatch)
 
             const correctOption = lastQuestion.answerIndex
             // if want full text: const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
@@ -131,7 +130,7 @@ export class MatchService {
 
         const prizes = getCurrentPrizes(match.questionIndex)
 
-        // await this._matchRepo.update(match.id, { state: 'stopped' })
+        // await this._matchRepo.update(match.id, { state: 'stopped' })//TODO: UNCOMMENT
         const pointsInfo = await this._pointsService.savePointsToPlayer(userId, match, prizes.stopPrize)
 
 

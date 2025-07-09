@@ -19,11 +19,29 @@ export class HistoricService {
 
 
   async getCurrentQuestion(historicId: number): Promise<Question> {
-    const currentHistoric = await this._historicRepo.findOneOrFail({
+    const currentHistoric = await this._historicRepo.findOne({
       where: { id: historicId},
       relations: ['historicQuestions', 'historicQuestions.question'],
       order: { historicQuestions: { orderIndex: 'ASC' } },
     })
+
+    if(!currentHistoric)
+      throw new BadRequestException("There's no question in history")
+
+
+    return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1].question
+  }
+
+
+  async getCurrentQuestionByUserId(userId: number): Promise<Question> {
+    const currentHistoric = await this._historicRepo.findOne({
+      where: { user: {id:  userId }, match: { state: "playing" }},
+      relations: ['historicQuestions', 'historicQuestions.question'],
+      order: { historicQuestions: { orderIndex: 'ASC' } },
+    })
+
+    if(!currentHistoric)
+      throw new BadRequestException("There's no question in history")
 
 
     return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1].question
