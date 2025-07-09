@@ -10,9 +10,7 @@ import {HistoricQuestion} from "../../../models/historicQuestion.model";
 @Injectable()
 export class QuestionService {
     constructor(
-        @InjectRepository(Question) private readonly _questionRepo: Repository<Question>,
-        @InjectRepository(HistoricQuestion) private readonly _historicQuestionRepo: Repository<HistoricQuestion>
-
+        @InjectRepository(Question) private readonly _questionRepo: Repository<Question>
     ) { }
 
 

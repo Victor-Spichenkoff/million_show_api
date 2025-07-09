@@ -7,13 +7,27 @@ import { Repository } from 'typeorm';
 import { HomeInfos } from 'types/home';
 import {Point} from "../../../models/points.model";
 import {not} from "rxjs/internal/util/not";
+import {HistoricQuestion} from "../../../models/historicQuestion.model";
+import {Question} from "../../../models/question.model";
 
 @Injectable()
 export class HistoricService {
   constructor(
     @InjectRepository(Historic) private readonly _historicRepo: Repository<Historic>,
-    @InjectRepository(Point) private readonly _pointsRepo: Repository<Point>,
+    @InjectRepository(Point) private readonly _pointsRepo: Repository<Point>
   ) { }
+
+
+  async getCurrentQuestion(historicId: number): Promise<Question> {
+    const currentHistoric = await this._historicRepo.findOneOrFail({
+      where: { id: historicId},
+      relations: ['historicQuestions', 'historicQuestions.question'],
+      order: { historicQuestions: { orderIndex: 'ASC' } },
+    })
+
+
+    return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1].question
+  }
 
 
   async getHomeInfos(userId: number): Promise<HomeInfos> {
@@ -61,20 +75,7 @@ export class HistoricService {
     }))[0]
   }
 
-  async getCurrentQuestion(userId: number) {
-    const historic = await this._historicRepo.findOne({
-      where: {
-        user: { id: userId },
-        match: { state: "playing" }
-      },
-      relations: { questions: true }
-    })
 
-    if (!historic || historic.questions.length == 0)
-      throw new BadRequestException("User has no active match")
-
-    return historic.questions[historic.questions.length - 1]
-  }
 
 
   create(createHistoricDto: CreateHistoricDto) {

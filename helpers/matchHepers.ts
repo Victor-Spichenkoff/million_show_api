@@ -87,6 +87,6 @@ export const validateMatch =(match: Match,
     {hasSkip, isWaiting}: MatchValidator) => {
     if (hasSkip && match.skips == 0)
         throw new BadRequestException("You don't have more skips!")
-    if(isWaiting && match.questionState != "wating")
+    if(isWaiting && match.questionState != "waiting")
         throw new BadRequestException("Question already answered")
 }

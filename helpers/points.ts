@@ -114,7 +114,7 @@ const match: Match = {
   "wrongPrize": 0,
   "stopPrize": 0,
   "nextPrize": 1000,
-  "questionState": "wating",
+  "questionState": "waiting",
   historic: new Historic()
 }
 // const = match: Match = {

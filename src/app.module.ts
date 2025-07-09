@@ -4,13 +4,14 @@ import { ControllersModule } from './modules/controllers.module'
 import { AppController } from './app.controller';
 import { GeneralModule } from './modules/general.module';
 import { PointsModule } from './core/points/points.module';
+import { HistoricQuestionModule } from './core/historic-question/historic-question.module';
 
 
 @Module({
   imports: [
     ConfigModules, 
     ControllersModule, 
-    GeneralModule, PointsModule
+    GeneralModule, PointsModule, HistoricQuestionModule
   ],
   controllers: [AppController],
 })

@@ -7,7 +7,7 @@ import {HistoricQuestion} from "../../../models/historicQuestion.model";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, HistoricQuestion]),
+    TypeOrmModule.forFeature([Question]),
   ],
   controllers: [QuestionController],
   providers: [QuestionService],

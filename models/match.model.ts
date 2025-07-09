@@ -43,8 +43,8 @@ export class Match {
   nextPrize: number = 1_000
 
 
-  @Column({ default: "wating" })
-  questionState: QuestionState = "wating"
+  @Column({ default: "waiting" })
+  questionState: QuestionState = "waiting"
 
   // historic
   @OneToOne(() => Historic, (h) => h.match, { onDelete: "CASCADE" })

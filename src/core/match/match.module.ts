@@ -9,6 +9,8 @@ import { QuestionModule } from '../question/question.module';
 import { HelpersModule } from 'src/helpers/helpers.module';
 import { PointsModule } from '../points/points.module';
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
+import {HistoricModule} from "../historic/historic.module";
+import {HistoricQuestionModule} from "../historic-question/historic-question.module";
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import {HistoricQuestion} from "../../../models/historicQuestion.model";
     QuestionModule,
     HelpersModule,
     PointsModule,
+    HistoricModule,
+    HistoricQuestionModule
   ],
   controllers: [MatchController],
   providers: [MatchService],

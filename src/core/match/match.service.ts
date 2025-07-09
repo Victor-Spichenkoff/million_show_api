@@ -14,6 +14,8 @@ import { AnswerResponse } from 'types/reponses'
 import { HistoricHelper } from 'src/helpers/historicHelper.service'
 import {PointsService} from "../points/points.service";
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
+import {HistoricService} from "../historic/historic.service";
+import {HistoricQuestionService} from "../historic-question/historic-question.service";
 
 @Injectable()
 export class MatchService {
@@ -25,7 +27,12 @@ export class MatchService {
         private readonly _questionService: QuestionService,
         private readonly _pointsService: PointsService,
         private readonly _historicHelperService: HistoricHelper,
-    ) { }
+        private readonly _historicService: HistoricService,
+        private readonly _historicQuestionService: HistoricQuestionService,
+    ) {
+
+
+    }
 
 
     async answerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerResponse> {
@@ -55,20 +62,7 @@ export class MatchService {
             throw new BadRequestException("User already responded to last question. Order a new one, please")
 
 
-        //CHANGE:
-        // const questions = currentMatch.historic.questions
-        // const lastQuestion = questions[currentMatch.questionIndex - 1]
-        // const lastQuestion = questions[questions.length - 1]//maybe trouble
-
-
-        const currentHistoric = await this._historyRepo.findOneOrFail({
-            where: { id: currentMatch.historic.id},
-            relations: ['historicQuestions', 'historicQuestions.question'],
-            order: { historicQuestions: { orderIndex: 'ASC' } },
-        })
-
-        const lastQuestion = currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1].question
-
+        const lastQuestion = await this._historicService.getCurrentQuestion(currentMatch.historic.id)
 
         //erroU ?
         if (answerIndex != lastQuestion.answerIndex) {
@@ -158,37 +152,23 @@ export class MatchService {
         const currentHistoric = await this._historyRepo.findOneOrFail({
             where: { match: { id: currentMatch.id } },
             relations: {questions: true, historicQuestions: true },
-            // relations: ['historicQuestions', 'historicQuestions.question'],
             order: { historicQuestions: { orderIndex: 'ASC' } },
         })
 
-        if (currentMatch.questionState == "wating" && currentHistoric.historicQuestions.length > 0)
-        // if (currentMatch.questionState == "wating" && currentHistoric.questions.length > 0)
+        if (currentMatch.questionState == "waiting" && currentHistoric.historicQuestions.length > 0)
             throw new BadRequestException("Answer the previous question first!")
 
         //update historic and add question
-        const newlevel = getLevelByQuetionIndex(currentMatch.questionIndex)
+        const newLevel = getLevelByQuetionIndex(currentMatch.questionIndex)
 
 
         const test= await this._historicQuestionRepo.find({
             where: { historic: { user: { id: userId } } }
         })
 
-        const newQuestion = await this._questionService.getNewQuestionFiltered(test, newlevel, isEn)
+        const newQuestion = await this._questionService.getNewQuestionFiltered(test, newLevel, isEn)
 
-        const newHistoricQuestion = new HistoricQuestion()
-        newHistoricQuestion.historic = currentHistoric
-        newHistoricQuestion.question = newQuestion
-        newHistoricQuestion.orderIndex = currentHistoric.historicQuestions?.length ?? 0
-
-        await this._historicQuestionRepo.save(newHistoricQuestion)
-
-
-        console.log("CREATE:")
-        currentHistoric.historicQuestions.push(newHistoricQuestion)
-        console.log(currentHistoric.historicQuestions)
-
-        // await this._historyRepo.save(currentHistoric)/TODO: CAHNGE
+        await this._historicQuestionService.addNewQuestion(newQuestion, currentHistoric)
 
         currentMatch.questionIndex += 1
 
@@ -198,11 +178,9 @@ export class MatchService {
         currentMatch.wrongPrize = currentPrizes.wrongPrize
         currentMatch.stopPrize = currentPrizes.stopPrize
         // currentMatch.questionIndex = currentHistoric.questions.length
-        currentMatch.questionState = "wating"
+        currentMatch.questionState = "waiting"
         currentMatch.hintState = "none"
 
-
-        // await this._historyRepo.update(currentHistoric.id, currentHistoric)
         await this._matchRepo.update(currentMatch.id, currentMatch)
 
         return newQuestion
@@ -223,13 +201,9 @@ export class MatchService {
 
 
         if (!currentHistoric?.questions || currentHistoric?.historicQuestions.length < 1)
-        // if (!currentHistoric?.questions || currentHistoric?.questions?.length < 1)
             throw new BadRequestException("Please get the new question at /match/next")
 
-        console.log("GET: ")
-        console.log(currentHistoric?.questions)
         return currentHistoric.historicQuestions[currentHistoric.historicQuestions.length - 1].question
-        // return currentHistoric?.questions[currentHistoric.questions.length - 1]
     }
 
     async getCurrentMatch(userId) {
