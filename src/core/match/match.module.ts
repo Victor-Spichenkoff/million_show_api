@@ -8,10 +8,11 @@ import { UserModule } from '../user/user.module';
 import { QuestionModule } from '../question/question.module';
 import { HelpersModule } from 'src/helpers/helpers.module';
 import { PointsModule } from '../points/points.module';
+import {HistoricQuestion} from "../../../models/historicQuestion.model";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Match, Historic]),
+    TypeOrmModule.forFeature([Match, Historic, HistoricQuestion]),
     UserModule,
     QuestionModule,
     HelpersModule,

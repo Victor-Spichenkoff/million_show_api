@@ -7,12 +7,13 @@ import {
   JoinColumn,
   OneToOne,
   ManyToMany,
-  JoinTable,
+  JoinTable, OneToMany,
 } from 'typeorm';
 import { States } from '../types/states';
 import { User } from './user.model';
 import { Match } from './match.model';
 import { Question } from './question.model';
+import {HistoricQuestion} from "./historicQuestion.model";
 
 @Entity()
 export class Historic {
@@ -43,4 +44,8 @@ export class Historic {
   @JoinTable()
   // @JoinColumn({ name: 'question_id', referencedColumnName: "id" })
   questions: Question[]
+
+  // ensure order on get
+  @OneToMany(() => HistoricQuestion, (hq) => hq.historic, { cascade: true })
+  historicQuestions: HistoricQuestion[];
 }

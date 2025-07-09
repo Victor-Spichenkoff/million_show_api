@@ -133,8 +133,6 @@ const match: Match = {
 //   historic: new Historic()
 // }
 
-console.log(savePointsToPlayer(0, match, 0))
-
 
 // for (let f of [...prizes, 1_000_000]) {
 //   console.log(`${f} -> ` + getTriangularWithPrizes(f));
