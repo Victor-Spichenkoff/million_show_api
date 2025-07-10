@@ -4,7 +4,7 @@ import { Question } from 'models/question.model';
 import { Repository } from 'typeorm';
 import { Match } from 'models/match.model';
 import { User } from 'models/user.model';
-import { giveCurrentMatchOrThrow, validateMatch } from 'helpers/matchHepers';
+import { validateMatch } from 'helpers/matchHepers';
 import { HistoricService } from '../historic/historic.service';
 import { getRandomIntInclusive } from 'helpers/numeric';
 import { getHalfQuestion, getUniversitaryAnswer } from 'helpers/hint';
@@ -12,20 +12,11 @@ import { getHalfQuestion, getUniversitaryAnswer } from 'helpers/hint';
 @Injectable()
 export class HintService {
     constructor(
-        @InjectRepository(Question) private readonly _questionRepo: Repository<Question>,
         @InjectRepository(Match) private readonly _matchRepo: Repository<Match>,
-        @InjectRepository(User) private readonly _userRepo: Repository<User>,
         private readonly historicService: HistoricService
     ) { }
 
     async skip(userId: number) {
-        // const user = await this._userRepo.findOne({
-        //   where: { id: userId },
-        //   relations: { matchs: true }
-        // })
-
-        // const match = giveCurrentMatchOrThrow(user?.matchs)//await this._matchRepo.findOneBy({ id: matchId })
-
         const match = await this.getCurrentMatch(userId)
 
         validateMatch(match, {
@@ -36,12 +27,12 @@ export class HintService {
             throw new BadRequestException("You can't skip the Million Question")
 
 
-        match.skips -= 1
+        match.skips -= 1//TODO: UNCOMMENT
         match.hintState = "none"
         match.questionState = "answered"
 
-        await this._matchRepo.update(match.id, match)
-        return "Skiped"
+        await this._matchRepo.update(match.id, match)//TODO: UNCOMMENT
+        return "Skipped"
     }
 
 
@@ -61,7 +52,7 @@ export class HintService {
         if (match.hintState == "none") {
             if (match.universitary == 0)
                 throw new BadRequestException("You don't have more of this help")
-            // match.universitary -= 1//TODO: UNCOMMENT
+            match.universitary -= 1//TODO: UNCOMMENT
             match.hintState = "univertitary"
         } else {
             match.hintState = "none"
