@@ -3,6 +3,5 @@ export type HomeInfos = {
     leaderBoardPosition: number | string
     correctAnswers: number | string
     accumulatedPrizes: number | string
-    alreadyStarted: boolean
     matchId: null | number
 }

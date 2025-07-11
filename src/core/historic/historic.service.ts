@@ -49,40 +49,52 @@ export class HistoricService {
 
 
   async getHomeInfos(userId: number): Promise<HomeInfos> {
-    const historic = await this._historicRepo.find({
+    const historics = await this._historicRepo.find({
       where: { user: { id: userId } },
       relations: { match: true }
     })
 
-    if(historic.length == 0)
+    if(historics.length == 0)
       return {
         points: "Not Started",
         accumulatedPrizes: "none",
-        alreadyStarted: false,
         correctAnswers: "0",
         leaderBoardPosition: "Play first",
         matchId: null
       }
 
-    const pointsByUser = await this._pointsRepo.find({
-      where: { user: { id: userId } },
-      select: { points: true },
+
+    const rankedUsers = await this._pointsRepo
+        .createQueryBuilder("point")
+        .select("point.userId", "userId")
+        .addSelect("SUM(point.points)", "totalPoints")
+        .groupBy("point.userId")
+        .orderBy("totalPoints", "DESC")
+        .getRawMany()
+
+    const leaderBoardPosition = rankedUsers.findIndex(r => r.userId === userId) + 1;
+
+    const accumulatedPrizes = historics.map(h => h.finalPrize).reduce((total, current) => total + current)
+    const match = historics.map(h => h.match)
+
+    let correctAnswers = 0
+    match.forEach(m => {
+      if(m.state == "won")
+        correctAnswers += m.questionIndex
+      else
+        correctAnswers += m.questionIndex - 1
     })
 
-    let points: string | number = "Not Started"
-    if(pointsByUser.length != 0)
-      points = pointsByUser.reduce((accumulator, current) => accumulator + current.points, 0)
 
-    //TODO: IMPLEMENT THE REST (show real infos, alreadyStarted, correctAnswers, poisition, ...)
     return {
-      points,
-      accumulatedPrizes: "none",
-      alreadyStarted: true,
-      correctAnswers: "0",
-      leaderBoardPosition: "Let's get started?",
-      matchId: historic.find(h => h.match.state == "playing")?.match.id ?? null
+      points: rankedUsers[leaderBoardPosition-1].totalPoints,
+      accumulatedPrizes,
+      correctAnswers,
+      leaderBoardPosition,
+      matchId: historics.find(h => h.match.state == "playing")?.match.id ?? null
     }
   }
+
 
   async getLastMatch(userId: number) {
     return (await this._historicRepo.find({
@@ -94,11 +106,10 @@ export class HistoricService {
   }
 
 
-
-
   create(createHistoricDto: CreateHistoricDto) {
     return 'This action adds a new historic';
   }
+
 
   findAll() {
     return this._historicRepo.find({ relations: { questions: true } })

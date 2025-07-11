@@ -18,7 +18,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.NODE_ENV === 'development' ? '*' : [
-        //TODO: ADD FINAL URL
+        "https://million-show.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
