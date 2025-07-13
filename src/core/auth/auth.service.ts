@@ -22,11 +22,9 @@ export class AuthService {
         createAuthDto.password = await hashPassword(createAuthDto.password)
 
         try {
-            return "create"
-            //TODO: UNCOMMENT
-            // const finalUser = await this._userRepo.save(createAuthDto)
-            // return await this.login(finalUser)
-            // return finalUser.userName//don't use it, I gues
+            const finalUser = await this._userRepo.save(createAuthDto)
+            return await this.login(finalUser)
+            // return finalUser.userName//don't use it, I guess
         } catch (error) {
             if (error.code === "SQLITE_CONSTRAINT" || error.code === "23505")
                 throw new BadRequestException(`User with name '${createAuthDto.userName}' already exists`)
@@ -37,7 +35,7 @@ export class AuthService {
     }
 
     async login(user: User) {
-        const payload = { sub: user.id, userName: user.userName }
+        const payload = { sub: user.id, userName: user.userName, role: user.role }
 
         return {
             ...user,

@@ -44,17 +44,18 @@ export class UserService {
     }
 
     findOne(id: number, includeMatch = false) {
-        return this.userRepo.findOne({ 
-            where: { id }, 
-            relations: { 
+        return this.userRepo.findOne({
+            where: { id },
+            relations: {
                 historic: true, matchs: includeMatch
-            }, 
+            },
         })
     }
 
     async update(id: number, updateUserDto: UpdateUserDto) {
         if (updateUserDto.password)
             updateUserDto.password = await hashPassword(updateUserDto.password)
+
 
         return await this.userRepo.update(id, updateUserDto)
     }
