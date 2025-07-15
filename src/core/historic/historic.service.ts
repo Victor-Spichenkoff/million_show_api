@@ -51,7 +51,8 @@ export class HistoricService {
   async getHomeInfos(userId: number): Promise<HomeInfos> {
     const historics = await this._historicRepo.find({
       where: { user: { id: userId } },
-      relations: { match: true }
+      relations: { match: true },
+      order: { finishDate: "DESC" }
     })
 
     if(historics.length == 0)
@@ -60,7 +61,8 @@ export class HistoricService {
         accumulatedPrizes: "none",
         correctAnswers: "0",
         leaderBoardPosition: "Play first",
-        matchId: null
+        matchId: null,
+        recentHistoric: null
       }
 
 
@@ -91,7 +93,8 @@ export class HistoricService {
       accumulatedPrizes,
       correctAnswers,
       leaderBoardPosition,
-      matchId: historics.find(h => h.match.state == "playing")?.match.id ?? null
+      matchId: historics.find(h => h.match.state == "playing")?.match.id ?? null,
+      recentHistoric: historics.filter(h=> h.finalState != "playing" && h.finalState != null).slice(0, 4)
     }
   }
 
