@@ -9,6 +9,7 @@ import {Point} from "../../../models/points.model";
 import {not} from "rxjs/internal/util/not";
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
 import {Question} from "../../../models/question.model";
+import {Match} from "../../../models/match.model";
 
 @Injectable()
 export class HistoricService {
@@ -96,6 +97,15 @@ export class HistoricService {
       matchId: historics.find(h => h.match.state == "playing")?.match.id ?? null,
       recentHistoric: historics.filter(h=> h.finalState != "playing" && h.finalState != null).slice(0, 4)
     }
+  }
+
+
+  async getFullHistoricByUser(userId: number): Promise<Historic[]> {
+    return await this._historicRepo.find({
+      where: {user: { id: userId }},
+      relations: { match: true},
+      order: { finishDate: "DESC" }
+    })
   }
 
 

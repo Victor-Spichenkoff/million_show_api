@@ -29,10 +29,7 @@ export class MatchService {
         private readonly _historicHelperService: HistoricHelper,
         private readonly _historicService: HistoricService,
         private readonly _historicQuestionService: HistoricQuestionService,
-    ) {
-
-
-    }
+    ) {}
 
 
     async answerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerResponse> {
@@ -277,11 +274,19 @@ export class MatchService {
 
     async setManyToCancelled(matchs: Match[]) {
         for (let match of matchs) {
-            this._historyRepo.update({
+            await this._historyRepo.update({
                 match: { id: match.id }
-            }, { finishDate: Number(new Date()) })
+            }, { finishDate: Number(new Date()), finalState: "cancelled" })
             match.state = "cancelled"
             await this._matchRepo.update(match.id, match)
         }
+        // for(let h of historic) {
+        //     await this._historyRepo.update({
+        //         finalState: null,
+        //     }, {
+        //
+        //     })
+        //
+        // }
     }
 }
