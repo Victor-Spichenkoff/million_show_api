@@ -55,4 +55,9 @@ export class AuthService {
         }
         throw new BadRequestException('Invalid Username or Password')
     }
+
+
+    testLogin() {
+      return "Logged In"
+    }
 }
