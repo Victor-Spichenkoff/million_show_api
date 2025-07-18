@@ -1,9 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Optional, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Optional,
+  UseGuards,
+  BadRequestException
+} from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {RolesGuard} from "../auth/guards/roles.guard";
+import {Roles} from "../../../decorators/roles.decorator";
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -21,7 +35,7 @@ export class QuestionController {
   @Get()
   async findPaged(
     @Query("page") page: number = 0,
-    @Query("skip") @Optional() skip: number = 10
+    @Query("skip") @Optional() skip: number
   ) {
     return await this.questionService.findPaged(page, skip);
   }
@@ -32,6 +46,7 @@ export class QuestionController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: number) {
     return await this.questionService.findOne(+id);
   }
@@ -45,12 +60,16 @@ export class QuestionController {
     return "Error updating question"
   }
 
+  @Roles("adm")
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {
-    const res = await this.questionService.remove(id);
-    if (Number(res.affected) > 0)
-      return "Deleted " + id
-
-    return "Question doesn't exist"
+   return "DELETED AKE"
+    //TODO: UNCOMMENT
+    // const res = await this.questionService.remove(id)
+    // if (Number(res.affected) > 0)
+    //   return "Deleted " + id
+    //
+    // throw new BadRequestException("Question doesn't exist")
   }
 }

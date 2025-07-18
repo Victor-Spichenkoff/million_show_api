@@ -1,13 +1,14 @@
-import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {Not, Repository} from 'typeorm';
 import { User } from '../../../models/user.model';
 import { hashPassword } from 'helpers/crypto';
 import { HistoricService } from '../historic/historic.service'
-import { MatchService } from '../match/match.service';
 import { Match } from 'models/match.model';
+import {not} from "rxjs/internal/util/not";
+import {pageSize} from "../../../global";
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,15 @@ export class UserService {
         @InjectRepository(Match) private readonly _matchRepo: Repository<Match>,
         private readonly historicService: HistoricService,
     ) {}
+
+
+    async getUserForAdm(userId: number, page: number = 0): Promise<User[]> {
+        return await this.userRepo.find({
+            where: {id: Not(userId)},
+            skip: page * pageSize,
+            take: pageSize,
+        })
+    }
 
 
     async cleanHistoric(userId: number) {

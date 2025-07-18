@@ -17,13 +17,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // substitui o original, posso mexer nele
     handleRequest(err, user, info, context) {
         if (err || !user) {
-            throw new UnauthorizedException('Invalid Token!');
+            throw new UnauthorizedException('Invalid Token!')
         }
 
         // Adiciona o usuário na requisição para handlers posteriores
-        const request = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest()
         request.user = user
 
-        return user; // Retorna o usuário autenticado
+        return user // Retorna o usuário autenticado
     }
 }

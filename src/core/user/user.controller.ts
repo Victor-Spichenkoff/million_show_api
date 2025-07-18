@@ -50,4 +50,9 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+  @Roles("adm")
+  getUserForAdm(@Request() req: AuthReq, @Param("page") page: number) {
+    return this.userService.getUserForAdm(+req.user.id, page)
+  }
 }

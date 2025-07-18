@@ -2,10 +2,10 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Question } from 'models/question.model';
-import { Historic } from 'models/historic.model';
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
+import {pageSize} from "../../../global";
 
 @Injectable()
 export class QuestionService {
@@ -55,7 +55,7 @@ export class QuestionService {
     }
 
 
-    async findPaged(page = 0, skip = 10) {
+    async findPaged(page = 0, skip: number = pageSize) {
         return await this._questionRepo.find({
             skip: page * skip,
             take: skip,
@@ -75,6 +75,6 @@ export class QuestionService {
     }
 
     async remove(id: number) {
-        return await this._questionRepo.delete(id)
+        await this._questionRepo.delete(id)
     }
 }
