@@ -23,9 +23,6 @@ export class QuestionService {
             if (hq.question)
                 questionsIds.push(hq.question.id)
 
-        console.log("QUESTIONS IDS: ")
-        console.log(questionsIds)
-
 
         const randomQuestion = await this._questionRepo.createQueryBuilder("question")
             .where("question.id NOT IN (:...questionsIds)", { questionsIds })
@@ -55,8 +52,9 @@ export class QuestionService {
     }
 
 
-    async findPaged(page = 0, skip: number = pageSize) {
+    async findPaged(page = 0, isEn: boolean, skip: number = pageSize) {
         return await this._questionRepo.find({
+            where: { isBr: !isEn },
             skip: page * skip,
             take: skip,
         })

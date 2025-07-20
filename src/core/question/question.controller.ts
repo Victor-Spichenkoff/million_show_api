@@ -31,13 +31,15 @@ export class QuestionController {
   }
 
   @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
+  @ApiQuery({ name: 'isEn', required: false, type: Boolean, example: true })
   @ApiQuery({ name: 'skip', required: false, type: Number, example: 10 })
   @Get()
   async findPaged(
     @Query("page") page: number = 0,
+    @Query("isEn") @Optional() isEn: string="true",
     @Query("skip") @Optional() skip: number
   ) {
-    return await this.questionService.findPaged(page, skip);
+    return await this.questionService.findPaged(page, isEn=="true", skip);
   }
 
   @Get("all")
