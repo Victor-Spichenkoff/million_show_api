@@ -2,12 +2,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import {Not, Repository} from 'typeorm';
+import { Repository} from 'typeorm';
 import { User } from '../../../models/user.model';
 import { hashPassword } from 'helpers/crypto';
 import { HistoricService } from '../historic/historic.service'
 import { Match } from 'models/match.model';
-import {not} from "rxjs/internal/util/not";
+
 import {pageSize} from "../../../global";
 
 @Injectable()
@@ -21,7 +21,6 @@ export class UserService {
 
     async getUserForAdm(userId: number, page: number = 0): Promise<User[]> {
         return await this.userRepo.find({
-            where: {id: Not(userId)},
             skip: page * pageSize,
             take: pageSize,
         })
@@ -46,7 +45,7 @@ export class UserService {
     }
 
     create(createUserDto: CreateUserDto) {
-        return 'This action adds a new user';
+        return 'This action adds a new user.ts';
     }
 
     findAll() {
@@ -70,8 +69,12 @@ export class UserService {
         return await this.userRepo.update(id, updateUserDto)
     }
 
-    remove(id: number) {
-        return this.userRepo.delete(id)
+    async remove(id: number) {
+        const res = await this.userRepo.delete(id)
+        if(res.affected)
+            return `Removed user with ID ${id}`
+
+        return `Can't remove user with ID ${id}`
     }
 
     async finUserByUserName(userName: string) {

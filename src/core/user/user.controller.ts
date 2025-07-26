@@ -1,9 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  BadRequestException,
+  Query
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiQuery} from '@nestjs/swagger';
 import { AuthReq } from 'types/requestTypes';
 import {Roles} from "../../../decorators/roles.decorator";
 import {RolesGuard} from "../auth/guards/roles.guard";
@@ -11,7 +23,8 @@ import {RolesGuard} from "../auth/guards/roles.guard";
 
 
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -28,16 +41,26 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  // @UseGuards(JwtAuthGuard)
+
   @Get("/me")
   getTokenUser(@Request() req: AuthReq) {
     return this.userService.findOne(+req.user.id)
   }
 
+
+  @Roles("normal")
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
+  @Get('/paged')
+  getUserForAdm(@Request() req: AuthReq, @Query("page") page: number = 0) {
+    return this.userService.getUserForAdm(+req.user.id, page)
+  }
+
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
+
 
   @Patch(':id')
   @Roles('adm')
@@ -45,14 +68,11 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }
 
+
   @Roles('adm')
   @Delete(':id')
   remove(@Param('id') id: string) {
+    return "REMOVED " + id//todo: uncomment
     return this.userService.remove(+id);
-  }
-
-  @Roles("adm")
-  getUserForAdm(@Request() req: AuthReq, @Param("page") page: number) {
-    return this.userService.getUserForAdm(+req.user.id, page)
   }
 }

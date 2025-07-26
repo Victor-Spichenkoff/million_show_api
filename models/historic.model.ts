@@ -34,7 +34,7 @@ export class Historic {
   @JoinColumn({ referencedColumnName: 'id', name: "match_id" })
   match: Match
 
-  //user id
+  //user.ts id
   @ManyToOne(() => User, (user) => user.historic, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId", referencedColumnName: "id" })
   user: User

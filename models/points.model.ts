@@ -40,7 +40,7 @@ export class Point {
   @Column({ default: 0 })
   totalTime: number = 0
 
-  //user id
+  //user.ts id
   @ManyToOne(() => User, (user) => user.points, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
   user: User

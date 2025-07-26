@@ -17,7 +17,7 @@ export class HistoricController {
   // }
 
   /**
-   * Infos about recent matchs from user
+   * Infos about recent matchs from user.ts
    */
   @Get("/home")
   async getHomeInfos(@Request() req) {

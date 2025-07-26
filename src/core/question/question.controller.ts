@@ -43,7 +43,7 @@ export class QuestionController {
   }
 
   @Get("all")
-  async finddAll() {
+  async findAll() {
     return await this.questionService.findAll();
   }
 

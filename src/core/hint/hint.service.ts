@@ -95,9 +95,9 @@ export class HintService {
         })
 
         if (!matchs.length)
-            throw new BadRequestException("user has no active match")
+            throw new BadRequestException("user.ts has no active match")
         if (matchs.length > 1)
-            throw new BadRequestException("user has more than 1 active match. Please stop the others matchs")
+            throw new BadRequestException("user.ts has more than 1 active match. Please stop the others matchs")
 
         return matchs[0]
     }
