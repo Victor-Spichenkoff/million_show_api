@@ -62,6 +62,12 @@ export class UserController {
   }
 
 
+  @Patch('/unrestricted/:id')
+  unrestrictedUpdate(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.unrestrictedUpdate(+id, updateUserDto);
+  }
+
+
   @Patch(':id')
   @Roles('adm')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
