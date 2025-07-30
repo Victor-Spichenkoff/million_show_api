@@ -23,8 +23,7 @@ import {RolesGuard} from "../auth/guards/roles.guard";
 
 
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -48,7 +47,7 @@ export class UserController {
   }
 
 
-  @Roles("normal")
+  @Roles("adm")
   @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
   @Get('/paged')
   getUserForAdm(@Request() req: AuthReq, @Query("page") page: number = 0) {
@@ -79,6 +78,6 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return "REMOVED " + id//todo: uncomment
-    return this.userService.remove(+id);
+    // return this.userService.remove(+id);
   }
 }

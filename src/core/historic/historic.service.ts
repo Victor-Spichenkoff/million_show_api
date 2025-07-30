@@ -59,9 +59,9 @@ export class HistoricService {
     if(historics.length == 0)
       return {
         points: "Not Started",
-        accumulatedPrizes: "none",
+        accumulatedPrizes: null,
         correctAnswers: "0",
-        leaderBoardPosition: "Play first",
+        leaderBoardPosition: null,
         matchId: null,
         recentHistoric: null
       }

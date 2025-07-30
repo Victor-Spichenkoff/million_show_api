@@ -69,9 +69,12 @@ export class UserService {
         if(updateUserDto.newPassword)
             updateUserDto.password = await hashPassword(updateUserDto.newPassword)
 
+        if(updateUserDto.currentPassword)
+            delete updateUserDto.currentPassword
+        if(updateUserDto.newPassword)
+            delete updateUserDto.newPassword
 
-        // return await this.userRepo.update(id, updateUserDto)
-        return "good!"
+        return await this.userRepo.update(id, updateUserDto)
     }
 
 
@@ -85,8 +88,7 @@ export class UserService {
         if(updateUserDto.newPassword)
             updateUserDto.password = await hashPassword(updateUserDto.newPassword)
 
-        return "created!"//todo: uncomment
-        // return await this.userRepo.update(id, updateUserDto)
+        return await this.userRepo.update(id, updateUserDto)
     }
 
 

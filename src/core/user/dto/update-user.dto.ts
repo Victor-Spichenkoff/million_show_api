@@ -10,7 +10,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @Transform(({ value }) => value === '' ? undefined : value)
     @MinLength(4, { message: 'Current password must be at least 4' })
     @MaxLength(12, { message: 'Current password must be lower than 12 characters' })
-    currentPassword: string
+    currentPassword?: string
 
     @ApiProperty()
     @IsOptional()
@@ -18,5 +18,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @Transform(({ value }) => value === '' ? undefined : value)
     @MinLength(4, { message: 'Password must be at least 4' })
     @MaxLength(12, { message: 'Password must be lower than 12 characters' })
-    newPassword: string
+    newPassword?: string
 }
