@@ -69,6 +69,13 @@ export class QuestionService {
     }
 
     async update(id: number, updateQuestionDto: UpdateQuestionDto) {
+        Object.keys(updateQuestionDto).forEach((key) => {
+            //for extra spaces and line breaks
+            if(typeof updateQuestionDto[key] === 'string')
+                updateQuestionDto[key] = updateQuestionDto[key].replace(/\s+/g, " ").trim()
+
+        })
+
         return await this._questionRepo.update(id, updateQuestionDto)
     }
 
