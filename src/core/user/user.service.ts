@@ -46,8 +46,8 @@ export class UserService {
         return "All clean!"
     }
 
-    create(createUserDto: CreateUserDto) {
-        return 'This action adds a new user.ts';
+    async create(createUserDto: CreateUserDto) {
+        return await this.userRepo.save(createUserDto)
     }
 
     findAll() {

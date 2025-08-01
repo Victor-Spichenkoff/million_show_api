@@ -19,4 +19,12 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @MinLength(4, { message: 'Password must be at least 4' })
     @MaxLength(12, { message: 'Password must be lower than 12 characters' })
     newPassword?: string
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    @Transform(({ value }) => value === '' ? undefined : value)
+    @MinLength(4, { message: 'Password must be at least 4' })
+    @MaxLength(12, { message: 'Password must be lower than 12 characters' })
+    password?: string
 }

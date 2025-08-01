@@ -6,6 +6,9 @@ import { Repository } from 'typeorm';
 import { Question } from 'models/question.model';
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
 import {pageSize} from "../../../global";
+import {Not} from "typeorm/browser";
+import {startWith} from "rxjs";
+import {dbConfig} from "../../../config/dbConfig";
 
 @Injectable()
 export class QuestionService {
@@ -52,12 +55,33 @@ export class QuestionService {
     }
 
 
-    async findPaged(page = 0, isEn: boolean, skip: number = pageSize) {
-        return await this._questionRepo.find({
-            where: { isBr: !isEn },
-            skip: page * skip,
-            take: skip,
-        })
+    async findPaged(page = 0, isEn: boolean, skip: number = pageSize, q) {
+        if(!q)
+            return await this._questionRepo.find({
+                where: { isBr: !isEn },
+                skip: page * skip,
+                take: skip,
+            })
+
+        // With query
+        const query = this._questionRepo
+            .createQueryBuilder("entity")
+
+        query.distinct(true)
+
+        if(Number(q)) {
+            query
+                .orWhere("CAST(entity.id AS TEXT) LIKE :id", { id: `${q}%` })
+                .take(pageSize)
+                .skip(pageSize * page)
+        }
+
+        query
+            .orWhere("LOWER(entity.label) LIKE :label", { label: `%${q.toLowerCase()}%` })
+            .take(pageSize)
+            .skip(pageSize * page)
+
+        return await query.getMany();
     }
 
     async findAll() {

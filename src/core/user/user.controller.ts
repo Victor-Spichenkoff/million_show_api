@@ -60,6 +60,11 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
+
 
   @Patch('/unrestricted/:id')
   unrestrictedUpdate(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

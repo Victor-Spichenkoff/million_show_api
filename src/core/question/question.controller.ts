@@ -9,7 +9,6 @@ import {
   Query,
   Optional,
   UseGuards,
-  BadRequestException
 } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
@@ -18,6 +17,7 @@ import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {RolesGuard} from "../auth/guards/roles.guard";
 import {Roles} from "../../../decorators/roles.decorator";
+import {pageSize} from "../../../global";
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -33,13 +33,15 @@ export class QuestionController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
   @ApiQuery({ name: 'isEn', required: false, type: Boolean, example: true })
   @ApiQuery({ name: 'skip', required: false, type: Number, example: 10 })
+  @ApiQuery({ name: 'q', required: false, type: String, example: "" })
   @Get()
   async findPaged(
     @Query("page") page: number = 0,
     @Query("isEn") @Optional() isEn: string="true",
-    @Query("skip") @Optional() skip: number
+    @Query("skip") @Optional() skip: number = pageSize,
+    @Query("q") @Optional() q: string = ""
   ) {
-    return await this.questionService.findPaged(page, isEn=="true", skip);
+    return await this.questionService.findPaged(page, isEn=="true", skip,  q);
   }
 
   @Get("all")
@@ -62,8 +64,8 @@ export class QuestionController {
     return "Error updating question"
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("adm")
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {
    return "DELETED AKE"
