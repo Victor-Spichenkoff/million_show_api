@@ -40,12 +40,24 @@ export class PointsService {
     return point;
   }
 
-  async getLeaderBoardByPoints(page: number = 0, take: number = 12) {
-      return await this.pointRepo.find({
-      order: { points: 'desc' },
-      skip: page * take,
-      take,
-    });
+  async getLeaderBoardByPoints(page: number = 0, take: number = 10) {
+    const query = this.pointRepo.createQueryBuilder("entity")
+
+
+    return await query
+        .innerJoin("entity.user", "user")
+        .select("user.id", "userId")
+        .addSelect("user.username", "username")
+        .addSelect("MAX(entity.corrects)", "bestMatchCorrects")
+        .addSelect("SUM(entity.points)", "totalPoints")
+        .addSelect("SUM(entity.corrects)", "totalCorrects")
+        .addSelect("SUM(entity.skipsUsed + entity.univerUsed + entity.halfUsed)", "totalUsedHelps")
+        .addSelect("AVG(entity.totalTime)", "avgTotalTime")
+        .groupBy("user.id")
+        .orderBy("totalPoints", "DESC")
+        .skip(page * take)
+        .take(take)
+        .getRawMany();
   }
 
   findOne(id: number) {

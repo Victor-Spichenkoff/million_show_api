@@ -33,7 +33,6 @@ export class MatchService {
 
 
     async answerQuestion(userId: number, answerIndex: AnswerIndex): Promise<AnswerResponse> {
-        //TODO: UNCOMMENT
         // return {
         //     isCorrect: true,
         //     // points: 1200
@@ -127,7 +126,7 @@ export class MatchService {
 
         const prizes = getCurrentPrizes(match.questionIndex)
 
-        // await this._matchRepo.update(match.id, { state: 'stopped' })//TODO: UNCOMMENT
+        await this._matchRepo.update(match.id, { state: 'stopped' })
         const pointsInfo = await this._pointsService.savePointsToPlayer(userId, match, prizes.stopPrize)
 
 
@@ -202,7 +201,7 @@ export class MatchService {
         return currentHistoric.historicQuestions[currentHistoric.historicQuestions.length - 1].question
     }
 
-    async getCurrentMatch(userId) {
+    async getCurrentMatch(userId: number) {
         const user = await this._userService.findOne(userId, true)
         return giveCurrentMatchOrThrow(user?.matchs)
     }
@@ -235,14 +234,11 @@ export class MatchService {
 
         await this._historyRepo.save(newHistoric)
 
-        const finalMatch = await this._matchRepo.findOne({
+        return await this._matchRepo.findOne({
             where: { id: createdMatch.id },
             relations: { historic: true },
             // relations: ["historic"],
         })
-
-
-        return finalMatch
     }
 
     findAll() {
@@ -280,13 +276,5 @@ export class MatchService {
             match.state = "cancelled"
             await this._matchRepo.update(match.id, match)
         }
-        // for(let h of historic) {
-        //     await this._historyRepo.update({
-        //         finalState: null,
-        //     }, {
-        //
-        //     })
-        //
-        // }
     }
 }

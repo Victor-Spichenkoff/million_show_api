@@ -104,6 +104,6 @@ export class QuestionService {
     }
 
     async remove(id: number) {
-        await this._questionRepo.delete(id)
+        return await this._questionRepo.delete(id)
     }
 }

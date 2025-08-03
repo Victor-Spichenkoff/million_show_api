@@ -82,7 +82,6 @@ export class UserController {
   @Roles('adm')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return "REMOVED " + id//todo: uncomment
-    // return this.userService.remove(+id);
+    return this.userService.remove(+id)
   }
 }

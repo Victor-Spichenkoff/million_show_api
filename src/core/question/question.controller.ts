@@ -8,7 +8,7 @@ import {
   Delete,
   Query,
   Optional,
-  UseGuards,
+  UseGuards, BadRequestException,
 } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
@@ -68,12 +68,10 @@ export class QuestionController {
   @Roles("adm")
   @Delete(':id')
   async remove(@Param('id') id: number) {
-   return "DELETED AKE"
-    //TODO: UNCOMMENT
-    // const res = await this.questionService.remove(id)
-    // if (Number(res.affected) > 0)
-    //   return "Deleted " + id
-    //
-    // throw new BadRequestException("Question doesn't exist")
+    const res = await this.questionService.remove(id)
+    if (Number(res.affected) > 0)
+      return "Deleted " + id
+
+    throw new BadRequestException("Question doesn't exist")
   }
 }
