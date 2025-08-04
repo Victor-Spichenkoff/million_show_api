@@ -225,7 +225,7 @@ export class MatchService {
 
         const newMatch = new Match()
         newMatch.user = user
-        if(process.env.IS_SEED=="ture") {
+        if(process.env.IS_SEED=="true") {
             console.log("SEED DATA CHANGE")
             newMatch.startDate = seedRandomDate()
         }

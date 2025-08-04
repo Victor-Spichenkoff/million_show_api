@@ -3,9 +3,10 @@ import {getRandomIntInclusive} from "../helpers/numeric";
 
 const baseUrl = 'http://localhost:2006'
 
-const names = ["james", "maria", "john", "a", "bs", "l", "kadshdndsnj", "player_123", "player_one", "ビクター", "max_33"]
+const names = ["james", "maria", "john", "a", "bs", "l", "kadshdndsnj", "player_123", "player_one","player_one", "ビクター", "max_33", "max_33"]
 
-const create = false
+const create = true
+
 async function createAndPlay(name: string) {
     try {
         const userName = name;
@@ -13,9 +14,10 @@ async function createAndPlay(name: string) {
 
         // 1. create
         try {
-            if(create)
+            if (create)
                 await axios.post(`${baseUrl}/auth/signup`, {userName, password, role: "normal"});
-        } catch (e){}
+        } catch (e) {
+        }
 
 
         // 2. login
@@ -31,40 +33,51 @@ async function createAndPlay(name: string) {
         for (let i = 1; i <= totalMatches; i++) {
             // start
             try {
-                await axios.post(`${baseUrl}/match/start`, { answer: 'A' }, {
-                    headers: { Authorization: `Bearer ${token}` }
+                await axios.post(`${baseUrl}/match/start`, {answer: 'A'}, {
+                    headers: {Authorization: `Bearer ${token}`}
                 })
-            } catch{}
+            } catch {
+            }
 
 
             // one round
             while (true) {
                 // make a cancellation (5%)
-                if(getRandomIntInclusive(0, 20) == 20) {
-                    await axios.post(`${baseUrl}/match/start?force=true`, { answer: 'A' }, {
-                      headers: { Authorization: `Bearer ${token}` }
+
+
+                if (getRandomIntInclusive(0, 20) == 20) {
+                    await axios.post(`${baseUrl}/match/start?force=true`, {}, {
+                        headers: {Authorization: `Bearer ${token}`}
                     })
                     console.log("CANCEL!")
                     break
                 }
 
                 const currentQuestion = await axios.get(`${baseUrl}/match/next`, {
-                  headers: { Authorization: `Bearer ${token}` }
+                    headers: {Authorization: `Bearer ${token}`}
                 })
 
+                //use hint
+                if (getRandomIntInclusive(0, 10) > 5) {
+                    try {
+                        await axios.get(`${baseUrl}/hint/half`, {
+                            headers: {Authorization: `Bearer ${token}`}
+                        })
+                    } catch{}
+                }
+
                 // correct
-                if(true) {
-                // if(getRandomIntInclusive(0, 10 + currentQuestion.data.level) <= 8) {
+                if (getRandomIntInclusive(0, 10 + currentQuestion.data.level * 2) <= 9) {
                     const res = await axios.patch(`${baseUrl}/match/answer/${currentQuestion.data.answerIndex}`, {}, {
-                      headers: { Authorization: `Bearer ${token}` }
+                        headers: {Authorization: `Bearer ${token}`}
                     })
-                    if(res.data.points) {
+                    if (res.data.points) {
                         console.log(`[ ${userName} ] It's million`)
                         break
                     }
                 } else {
                     await axios.patch(`${baseUrl}/match/answer/${currentQuestion.data.answerIndex == 1 ? 2 : 1}`, {}, {
-                      headers: { Authorization: `Bearer ${token}` }
+                        headers: {Authorization: `Bearer ${token}`}
                     })
                     console.log("WRONG!")
                     break
@@ -72,8 +85,8 @@ async function createAndPlay(name: string) {
 
                 // stop
                 if (getRandomIntInclusive(0, 9 + currentQuestion.data.level) > 9) {
-                    await axios.patch(`${baseUrl}/match/stop`, {}, {
-                      headers: { Authorization: `Bearer ${token}` }
+                    await axios.post(`${baseUrl}/match/stop`, {}, {
+                        headers: {Authorization: `Bearer ${token}`}
                     })
                     console.log("STOP!")
                     break
@@ -97,16 +110,17 @@ async function createAndPlay(name: string) {
         //
         // console.log(`Usuário ${username} jogou uma partida com sucesso.`);
     } catch (err: any) {
-        console.error(`Erro com usuário ${name}:`, err.message, err.status);
+        console.error(`Erro com usuário ${name}:`, err.message, err.response?.data);
+
     }
 }
 
 // Cria e joga com 10 usuários
 (async () => {
-    // for (let name of names) {
-    //     await createAndPlay(name)
-    // }
-        await createAndPlay("max_33")
+    for (let name of names) {
+        await createAndPlay(name)
+    }
+    // await createAndPlay("max_33")
 })();
 
 //start:
@@ -128,7 +142,6 @@ async function createAndPlay(name: string) {
 //         "finishDate": 0,
 //         "finalState": null
 // }
-
 
 
 //next

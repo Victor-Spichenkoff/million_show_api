@@ -45,7 +45,7 @@ export class HistoricService {
       throw new BadRequestException("There's no question in history")
 
 
-    return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1].question
+    return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1]?.question
   }
 
 
