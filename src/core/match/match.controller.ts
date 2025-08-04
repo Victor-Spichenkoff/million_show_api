@@ -35,6 +35,8 @@ export class MatchController {
   async getNextQuestion(@Request() req, @Query("isEn") isEn?: string) {
     const question = await this.matchService.getNext(+req.user.id, isEn == "true")
 
+    if(process.env.IS_SEED == "true")
+      return question
     return plainToInstance(GetQuestionDto, question)
   }
 

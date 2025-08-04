@@ -7,7 +7,7 @@ import { Repository } from 'typeorm'
 import { Historic } from 'models/historic.model'
 import { UserService } from '../user/user.service'
 import { getCurrentPrizes, getLevelByQuetionIndex, giveCurrentMatchOrThrow, isAlreadyStarted } from 'helpers/matchHepers'
-import { formatToCompleteNormalTime } from 'helpers/time'
+import {formatToCompleteNormalTime, seedRandomDate} from 'helpers/time'
 import { AnswerIndex } from 'types/indexs'
 import { QuestionService } from '../question/question.service'
 import { AnswerResponse } from 'types/reponses'
@@ -225,6 +225,10 @@ export class MatchService {
 
         const newMatch = new Match()
         newMatch.user = user
+        if(process.env.IS_SEED=="ture") {
+            console.log("SEED DATA CHANGE")
+            newMatch.startDate = seedRandomDate()
+        }
 
         const createdMatch = await this._matchRepo.save(newMatch)
 

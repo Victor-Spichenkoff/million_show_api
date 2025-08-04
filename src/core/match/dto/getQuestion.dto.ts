@@ -9,13 +9,13 @@ export class GetQuestionDto {
   id: number
   isBr: boolean
   label: string
-  
+
   option1: string
   option2: string
   option3: string
   option4: string
   level: 1 | 2 | 3
-  
+
   @Exclude()
   answerIndex: AnswerIndex
   @Exclude()
