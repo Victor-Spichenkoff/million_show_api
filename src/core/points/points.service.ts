@@ -6,10 +6,14 @@ import { Point } from '../../../models/points.model'
 import { InjectRepository } from '@nestjs/typeorm'
 import { getPointsInfo } from '../../../helpers/points'
 import { User } from '../../../models/user.model'
+import {UserService} from "../user/user.service";
 
 @Injectable()
 export class PointsService {
-    constructor(@InjectRepository(Point) private readonly pointRepo: Repository<Point>) {}
+    constructor(
+        @InjectRepository(Point) private readonly pointRepo: Repository<Point>,
+        private readonly userService: UserService,
+    ) {}
 
     /*
      * Give an final state match only. Just a second to be localStorage
@@ -59,7 +63,7 @@ export class PointsService {
         //     .take(take)
         //     .getRawMany()
 
-        return await query
+        const pointsInfo = await query
             .select('entity.userId', 'userId')
             .addSelect('MAX(entity.corrects)', 'bestMatchCorrects')
             .addSelect('SUM(entity.points)', 'totalPoints')
@@ -74,6 +78,14 @@ export class PointsService {
             .skip(page * take)
             .take(take)
             .getRawMany()
+
+
+        let final:any[] = []
+        for(let pi of pointsInfo) {
+            const user = await this.userService.findOne(pi.userId)
+            final.push({...pi, userName: user?.userName})
+        }
+        return final
     }
 
     async getPointsInfoForPlayer(playerId: number) {
