@@ -8,7 +8,6 @@ import {
   Delete,
   UseGuards,
   Request,
-  BadRequestException,
   Query
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -19,6 +18,8 @@ import {ApiBearerAuth, ApiQuery} from '@nestjs/swagger';
 import { AuthReq } from 'types/requestTypes';
 import {Roles} from "../../../decorators/roles.decorator";
 import {RolesGuard} from "../auth/guards/roles.guard";
+import {plainToInstance} from "class-transformer";
+import {GetUserDto} from "./dto/get-user.dto";
 
 
 
@@ -30,7 +31,7 @@ export class UserController {
 
 
   @Delete("/clean")
-  async cleanHistoricAndMatchs(@Request() req) {
+  async cleanHistoricAndMatches(@Request() req) {
     return await this.userService.cleanHistoric(+req.user.id)
   }
 
@@ -51,7 +52,9 @@ export class UserController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
   @Get('/paged')
   getUserForAdm(@Request() req: AuthReq, @Query("page") page: number = 0) {
-    return this.userService.getUserForAdm(+req.user.id, page)
+    const users = this.userService.getUserForAdm(+req.user.id, page)
+    return plainToInstance(GetUserDto, users)
+
   }
 
 

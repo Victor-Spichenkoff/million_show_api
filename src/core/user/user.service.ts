@@ -25,6 +25,7 @@ export class UserService {
         return await this.userRepo.find({
             skip: page * pageSize,
             take: pageSize,
+            select:  ["id", "userName", "role"]
         })
     }
 

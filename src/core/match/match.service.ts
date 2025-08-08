@@ -90,11 +90,9 @@ export class MatchService {
             }
         }
 
-
         //correct
         currentMatch.hintState = "none"
         currentMatch.questionState = "answered"
-
 
         // It's million prize
         if(currentMatch.questionIndex == 16) {

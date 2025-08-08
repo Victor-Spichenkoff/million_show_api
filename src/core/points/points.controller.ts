@@ -22,6 +22,13 @@ export class PointsController {
     return this.pointsService.findOne(+id);
   }
 
+
+
+  @Get("/player/:playerId")
+  getPointsInfoForPlayer(@Param('playerId') playerId: string) {
+    return this.pointsService.getPointsInfoForPlayer(+playerId)
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePointDto: UpdatePointDto) {
     return this.pointsService.update(+id, updatePointDto);
