@@ -34,6 +34,12 @@ export class HistoricController {
      return await this.historicService.getFullHistoricByUser(+req.user.id)
   }
 
+  @Get("/full/:userId")
+  async getFullHistoricByUser(@Param("userId") userId: string) {
+    return await this.historicService.getFullHistoricByUser(+userId)
+    // return await this.historicService.getFullHistoricByUserId(+userId)
+  }
+
   @Get()
   findAll() {
     return this.historicService.findAll();
