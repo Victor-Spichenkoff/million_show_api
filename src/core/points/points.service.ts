@@ -89,6 +89,10 @@ export class PointsService {
     }
 
     async getPointsInfoForPlayer(playerId: number) {
+        //TODO: UNCOMMENT
+        if(!playerId)
+            throw new BadRequestException("No such ID")
+
         const query = this.pointRepo.createQueryBuilder('entity')
 
         const dbResponse = await query
