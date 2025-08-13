@@ -13,10 +13,12 @@ export class HistoricHelper {
         if (!historicToClear)
             return
 
-        
 
-        for (let historic of historicToClear)
+
+        for (let historic of historicToClear) {
             await this._historicRepo.delete(historic.id)
+
+        }
     }
 
 

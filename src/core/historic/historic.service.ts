@@ -10,6 +10,8 @@ import {not} from "rxjs/internal/util/not";
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
 import {Question} from "../../../models/question.model";
 import {Match} from "../../../models/match.model";
+import {Prizes} from "../../../types/prizes";
+import {States} from "../../../types/states";
 
 @Injectable()
 export class HistoricService {
@@ -103,7 +105,7 @@ export class HistoricService {
   async getFullHistoricByUser(userId: number): Promise<Historic[]> {
     return await this._historicRepo.find({
       where: {user: { id: userId }},
-      relations: { match: true},
+      relations: { match: true },
       order: { finishDate: "DESC" }
     })
   }
@@ -118,6 +120,19 @@ export class HistoricService {
     }))[0]
   }
 
+
+  async updateOnMatchAction(matchId: number, points: number, finalPrize: number, finalState: States) {
+    await this._historicRepo.update(
+        { match: { id: matchId } },//where
+        {
+          points,
+          finalPrize,
+          finishDate: Number(new Date()),
+          finalState
+        }
+    )
+    return true
+  }
 
   create(createHistoricDto: CreateHistoricDto) {
     return 'This action adds a new historic';

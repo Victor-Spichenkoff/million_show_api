@@ -11,4 +11,5 @@ export const giveInitialHistoric = (match: Match, user: User): Historic => ({
   finishDate: 0,
   id: 0,
   historicQuestions: [],
+  points:0,
 })

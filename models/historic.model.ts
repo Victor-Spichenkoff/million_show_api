@@ -29,6 +29,9 @@ export class Historic {
   @Column({ nullable: true, default: undefined })
   finalState?: States = undefined
 
+  @Column({ default: 0 })
+  points:number = 0
+
   // match id
   @OneToOne(() => Match, { onDelete: "CASCADE" })
   @JoinColumn({ referencedColumnName: 'id', name: "match_id" })

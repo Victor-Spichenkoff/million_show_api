@@ -66,22 +66,24 @@ export class MatchService {
 
             const prizes = getCurrentPrizes(currentMatch.questionIndex)
 
-            await this._historyRepo.update(
-                { match: { id: currentMatch.id } },//where
-                {
-                    finalPrize: prizes.wrongPrize,
-                    finishDate: Number(new Date()),
-                    finalState: "lost",
-                }
-            )
+            // save match points
+            const pointInfos = await this._pointsService.savePointsToPlayer(userId, currentMatch, prizes.wrongPrize)
+
+            await this._historicService.updateOnMatchAction(currentMatch.id, pointInfos.points, prizes.wrongPrize, "lost")
+            // await this._historyRepo.update(
+            //     { match: { id: currentMatch.id } },//where
+            //     {
+            //         points: pointInfos.points,
+            //         finalPrize: prizes.wrongPrize,
+            //         finishDate: Number(new Date()),
+            //         finalState: "lost",
+            //     }
+            // )
             // currentMatch.questionState = 'answered'//to the points build
             await this._matchRepo.save(currentMatch)
 
             const correctOption = lastQuestion.answerIndex
-            // if want full text: const correctOption = lastQuestion[`option${lastQuestion.answerIndex}`]
 
-            // save match points
-            const pointInfos = await this._pointsService.savePointsToPlayer(userId, currentMatch, prizes.wrongPrize)
             return {
                 isCorrect: false,
                 correctAnswer: correctOption,
@@ -99,6 +101,7 @@ export class MatchService {
             currentMatch.state = "won"
             await this._matchRepo.save(currentMatch)
             const pointsInfo = await this._pointsService.savePointsToPlayer(userId, currentMatch, 1_000_000)
+            await this._historicService.updateOnMatchAction(currentMatch.id, pointsInfo.points, 1_000_000, "won")
 
             return {
                 isCorrect: true,
@@ -126,6 +129,8 @@ export class MatchService {
 
         await this._matchRepo.update(match.id, { state: 'stopped' })
         const pointsInfo = await this._pointsService.savePointsToPlayer(userId, match, prizes.stopPrize)
+
+        await this._historicService.updateOnMatchAction(match.id, pointsInfo.points, prizes.stopPrize, "stopped")
 
 
         return {
@@ -218,7 +223,8 @@ export class MatchService {
             const time = formatToCompleteNormalTime((new Date(alreadyStartedMatch[0].startDate)))
             throw new BadRequestException("You have already started a match at " + time + ". Please use /match/start?force=true")
         } else if (alreadyStartedMatch && force)
-            await this.setManyToCancelled(alreadyStartedMatch)
+            await this.setManyToCancelled(user.id, alreadyStartedMatch)
+
 
 
         const newMatch = new Match()
@@ -270,13 +276,16 @@ export class MatchService {
         })
     }
 
-    async setManyToCancelled(matchs: Match[]) {
-        for (let match of matchs) {
-            await this._historyRepo.update({
-                match: { id: match.id }
-            }, { finishDate: Number(new Date()), finalState: "cancelled" })
+    async setManyToCancelled(userId: number, matches: Match[]) {
+        for (let match of matches) {
+            const prizes = getCurrentPrizes(match.questionIndex)
+            const pointsInfo = await this._pointsService.savePointsToPlayer(userId, match, prizes.stopPrize)
+
+            await this._historicService.updateOnMatchAction(match.id, pointsInfo.points, prizes.stopPrize, "cancelled")
+
             match.state = "cancelled"
             await this._matchRepo.update(match.id, match)
+
         }
     }
 }
