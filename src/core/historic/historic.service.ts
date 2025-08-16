@@ -154,8 +154,8 @@ export class HistoricService {
     return `This action updates a #${id} historic`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} historic`;
+  async remove(id: number) {
+    return await this._historicRepo.delete(id)
   }
 
   async removeAll(historics: Historic[]) {

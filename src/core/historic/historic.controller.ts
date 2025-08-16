@@ -55,8 +55,8 @@ export class HistoricController {
   //   return this.historicService.update(+id, updateHistoricDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.historicService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.historicService.remove(+id);
+  }
 }

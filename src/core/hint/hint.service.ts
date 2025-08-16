@@ -27,11 +27,11 @@ export class HintService {
             throw new BadRequestException("You can't skip the Million Question")
 
 
-        match.skips -= 1//TODO: UNCOMMENT
+        match.skips -= 1//TEST_COMMENT
         match.hintState = "none"
         match.questionState = "answered"
 
-        await this._matchRepo.update(match.id, match)//TODO: UNCOMMENT
+        await this._matchRepo.update(match.id, match)//TEST_COMMENT
         return "Skipped"
     }
 
@@ -52,7 +52,7 @@ export class HintService {
         if (match.hintState == "none") {
             if (match.universitary == 0)
                 throw new BadRequestException("You don't have more of this help")
-            match.universitary -= 1//TODO: UNCOMMENT
+            match.universitary -= 1//TEST_COMMENT
             match.hintState = "univertitary"
         } else {
             match.hintState = "none"
@@ -77,7 +77,7 @@ export class HintService {
         if (match.hintState == "none") {
             if (match.halfHalf == 0)
                 throw new BadRequestException("You don't have more of this help")
-            match.halfHalf -= 1//TODO
+            match.halfHalf -= 1//TEST_COMMENT
             match.hintState = "half"
         } else {
             match.hintState = "none"
@@ -90,15 +90,15 @@ export class HintService {
 
 
     private async getCurrentMatch(userId) {
-        const matchs = await this._matchRepo.find({
+        const matches = await this._matchRepo.find({
             where: { user: { id: userId }, state: "playing" }
         })
 
-        if (!matchs.length)
+        if (!matches.length)
             throw new BadRequestException("user.ts has no active match")
-        if (matchs.length > 1)
-            throw new BadRequestException("user.ts has more than 1 active match. Please stop the others matchs")
+        if (matches.length > 1)
+            throw new BadRequestException("user.ts has more than 1 active match. Please stop the others matches")
 
-        return matchs[0]
+        return matches[0]
     }
 }
