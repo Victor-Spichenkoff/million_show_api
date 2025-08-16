@@ -112,8 +112,9 @@ export class PointsService {
             .orderBy('totalPoints', 'DESC')
             .getRawMany()
 
-        const bestMatch = await query
-            .where('user.id = :playerId', { playerId })
+        const bestMatch = await this.pointRepo
+            .createQueryBuilder('entity')
+            .where('entity.user.id = :playerId', { playerId })
             .orderBy('entity.points / entity.totalTime', 'DESC')
             .addOrderBy('entity.points', 'DESC')
             .select([
@@ -124,13 +125,13 @@ export class PointsService {
             .limit(1)
             .getRawOne()
 
+
         dbResponse.position = rankedUsers.findIndex((r) => r.userId === playerId) + 1
         dbResponse.bestMatchPoints = bestMatch.points
         dbResponse.bestMatchTime = bestMatch.totalTime
         return dbResponse
     }
 
-    async getPlayerStatistics(playerId: number) {}
 
     findOne(id: number) {
         return `This action returns a #${id} point`
