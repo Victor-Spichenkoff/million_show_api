@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository} from 'typeorm';
 import { User } from '../../../models/user.model';
-import { hashPassword } from 'helpers/crypto';
+import { hashPassword } from '../../../helpers/crypto';
 import { HistoricService } from '../historic/historic.service'
 import { Match } from 'models/match.model';
 

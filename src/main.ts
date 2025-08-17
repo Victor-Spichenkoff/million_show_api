@@ -5,6 +5,7 @@ import { configureSwagger } from '../config/swaggerConfig'
 import { PipeValidationConfig } from 'config/validationConfig'
 import { ValidationPipe } from '@nestjs/common'
 import { CustomBadRequestFilter } from 'global/error400Filter'
+import {configDotEnvFile} from "config/dotenv";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -15,6 +16,8 @@ async function bootstrap() {
   // app.useGlobalFilters(new ShortErrorFilter())
   app.useGlobalFilters(new CustomBadRequestFilter())
   app.useGlobalPipes(new ValidationPipe(PipeValidationConfig))
+
+  configDotEnvFile()//multi-file
 
   app.enableCors({
     origin: process.env.NODE_ENV === 'development' ? '*' : [

@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
+    "paths": {
+      "models/*": ["models/*"],
+      "src/*": ["src/*"],
+      "helpers/*": ["helpers/*"],
+      "config/*": ["config/*"]
+    },
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
