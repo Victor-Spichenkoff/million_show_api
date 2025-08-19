@@ -1,9 +1,16 @@
+import {configDotEnvFile} from "config/dotenv";
+configDotEnvFile()
+
+
 import {Test} from "@nestjs/testing"
 import {INestApplication} from "@nestjs/common"
 import {AppModule} from "../app.module"
 import * as request from 'supertest'
-import {hasUser, testAuthData} from "./services/auth"
-import {configDotEnvFile} from "config/dotenv";
+import {testAuthData} from "./services/auth"
+import * as process from "node:process";
+
+
+// dotenv.config({ path: '.env.test' })
 
 describe('Auth & Token', () => {
     let app: INestApplication
@@ -12,15 +19,22 @@ describe('Auth & Token', () => {
     let userId: string
 
     beforeAll(async () => {
+        configDotEnvFile()
         const moduleFixture = await Test.createTestingModule({
             imports: [AppModule],
         }).compile()
 
-        configDotEnvFile()
+
+
+        console.log("TEST_DB: " + process.env.DB_PATH)
+        console.log("TEST_ENV: " + process.env.NODE_ENV)
+
         app = moduleFixture.createNestApplication()
         await app.init()
         server = app.getHttpServer()
     })
+
+
 
     afterAll(async () => {
         await app.close()
@@ -57,6 +71,14 @@ describe('Auth & Token', () => {
             .expect(201)
 
         token = res.body.access_token
+
+        const re2 = await request(server)
+            .get("/user")
+            .set("Authorization", `Bearer ${token}`)
+            .expect(200)
+        console.log(re2.body)
+
+
         expect(token).toBeDefined()
     })
 

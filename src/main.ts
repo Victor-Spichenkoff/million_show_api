@@ -7,6 +7,9 @@ import { ValidationPipe } from '@nestjs/common'
 import { CustomBadRequestFilter } from 'global/error400Filter'
 import {configDotEnvFile} from "config/dotenv";
 
+// configDotEnvFile()//multi-file
+
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const port = process.env.PORT ?? 3000
@@ -17,8 +20,10 @@ async function bootstrap() {
   app.useGlobalFilters(new CustomBadRequestFilter())
   app.useGlobalPipes(new ValidationPipe(PipeValidationConfig))
 
-  configDotEnvFile()//multi-file
+  configDotEnvFile()
 
+     console.log("DB_PATH_REAL: " + process.env.DB_PATH)
+     console.log("ENV_REAL: " + process.env.NODE_ENV)
   app.enableCors({
     origin: process.env.NODE_ENV === 'development' ? '*' : [
         "https://million-show.vercel.app"
