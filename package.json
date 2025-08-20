@@ -14,7 +14,7 @@
     "dev-seed": "set IS_SEED=true && nest start --watch",
     "seed-user": "ts-node src/seeding/userCreation.ts",
     "seed": "ts-node src/seeding/run.ts",
-    "test:one": "npx jest ./src/test/match.spec.ts",
+    "test:one": "npx jest src/test/matchActions.spec.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
     "old_start:prod": "node dist/main",
