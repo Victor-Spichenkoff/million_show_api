@@ -21,19 +21,37 @@ export const SeedQuestions = async (questionRepository: Repository<Question>) =>
     // }
 
     //seeding real
-    const allQuestions = [...QuestionsLevel1, ...QuestionsLevel2, ...QuestionsLevel3]
+    //Just to reduce time at tests
+    let ql1 = [...QuestionsLevel1]
+    let ql2 = [...QuestionsLevel2]
+    let ql3 = [...QuestionsLevel3]
+    if(process.env.NODE_ENV == "test") {
+        // takes only 25%
+        ql1 = ql1.slice(Math.ceil(ql1.length * 0.75))
+        ql2 = ql2.slice(Math.ceil(ql2.length * 0.75))
+        ql3 = ql3.slice(Math.ceil(ql3.length * 0.75))
+    }
+    const allQuestions = [...ql1, ...ql2, ...ql3]
+    // const allQuestions = [...QuestionsLevel1, ...QuestionsLevel2, ...QuestionsLevel3]
 
 
     let affected = 0
+    let wrongCount = 0
 
     for(let question of allQuestions) {
         try {
             await questionRepository.save(question)
             affected += 1
         } catch(e) {
-            console.log("[ SEED ] ❌ Label -> " + question.label)
+            if(process.env.NODE_ENV == "test")
+                wrongCount += 1
+            else
+                console.log("[ SEED ] ❌ Label -> " + question.label)
         }
     }
+
+    if(wrongCount)
+        console.log(`[ SEED ] Fail questions count: ${wrongCount}`)
 
     return affected
 }
@@ -55,7 +73,7 @@ export class SeedQuestions {
 
         for(let q3 of QuestionsLevel1)
             await this._qr.save(q3)
-        
+
         return true
     }
 

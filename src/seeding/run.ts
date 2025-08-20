@@ -1,29 +1,28 @@
-import { dbConfig } from "../../config/dbConfig"
-import { Question } from "../../models/question.model"
-import { DataSource, DataSourceOptions } from "typeorm"
-import { SeedQuestions } from "./seedQuestions"
+import { dbConfig } from '../../config/dbConfig'
+import { Question } from '../../models/question.model'
+import { DataSource, DataSourceOptions } from 'typeorm'
+import { SeedQuestions } from './seedQuestions'
 
-const dataSource = new DataSource(dbConfig as DataSourceOptions)// erro aqui
+export const seed = async (dataSource: DataSource) => {
+    if(!dataSource.isInitialized)
+        await dataSource.initialize()
 
-
-
-const seed = async () => {
-    await dataSource.initialize()
-
-    console.log("\n[ SEED ] Seeding questions... ")
+    console.log('\n[ SEED ] Seeding questions... ')
     const questionRepository = dataSource.getRepository(Question)
     const successQuestionCount = await SeedQuestions(questionRepository)
-    if(successQuestionCount)
-        console.log("[ SEED ]  Questions Inserted " + successQuestionCount)
-    else
-        console.log("[ SEED ] ❌ Nothing seeded")
+    if (successQuestionCount) console.log('[ SEED ]  Questions Inserted ' + successQuestionCount)
+    else console.log('[ SEED ] ❌ Nothing seeded')
 
-    await dataSource.destroy()
-    console.log("[ SEED ] 🚀 Seed finished")
-  }
+    console.log('[ SEED ] 🚀 Seed finished')
+}
 
+if (process.env.NODE_ENV != 'test') {
+    const dataSource = new DataSource(dbConfig as DataSourceOptions) // erro aqui
 
-  seed().catch((err) => {
-    console.error("[ SEED ] ❌ Erro no seed:", err)
-    process.exit(1)
-  })
+    seed(dataSource).catch((err) => {
+        console.error('[ SEED ] ❌ Seed error:', err)
+        process.exit(1)
+    })
+
+    dataSource.destroy()
+} else console.log('NO AUTO SEED - TEST ENVIRONMENT')
