@@ -5,11 +5,11 @@ configDotEnvFile()
 import { INestApplication } from '@nestjs/common'
 import { setupTestApp } from 'src/test/test-setup'
 import * as request from 'supertest'
-import {testAuthData} from "src/test/services/auth";
-import {seed} from "src/seeding/run";
-import {DataSource} from "typeorm";
-import {Question} from "models/question.model";
-import {matchServiceFactory, startMatch} from "src/test/services/match";
+import { testAuthData } from 'src/test/services/auth'
+import { seed } from 'src/seeding/run'
+import { DataSource } from 'typeorm'
+import { Question } from 'models/question.model'
+import { matchServiceFactory } from 'src/test/services/match'
 
 describe('Match actions [lose, correct, stop]', () => {
     let app: INestApplication
@@ -24,21 +24,21 @@ describe('Match actions [lose, correct, stop]', () => {
         server = setupServer
 
         const dataSource = app.get(DataSource)
-        await  seed(dataSource)
+        await seed(dataSource)
 
         //create
         await request(server)
             .post('/auth/signup')
-            .send({userName: testAuthData.userName, password: testAuthData.password})
+            .send({ userName: testAuthData.userName, password: testAuthData.password })
 
         const loginRes = await request(server)
             .post('/auth/signin')
-            .send({userName: testAuthData.userName, password: testAuthData.password})
+            .send({ userName: testAuthData.userName, password: testAuthData.password })
             .expect(201)
 
         token = loginRes.body.access_token
 
-        matchService = matchServiceFactory(server, token);
+        matchService = matchServiceFactory(server, token)
     })
     afterAll(async () => {
         await app.close()
@@ -47,7 +47,6 @@ describe('Match actions [lose, correct, stop]', () => {
     // helpers
     let currentQuestion: Question
 
-
     //start match
     it('POST /match/start → should start match', async () => {
         const res = await matchService.startMatch()
@@ -55,25 +54,39 @@ describe('Match actions [lose, correct, stop]', () => {
         expect(res.body).toBeDefined()
     })
 
-
     // get question
-    it('POST /match/start → should get next', async () => {
+    it('GET /match/start → should get next', async () => {
         const res = await matchService.getNextQuestion()
-        // const res = await getNextQuestion(server, token)
 
         currentQuestion = res.body
 
         expect(res.body).toBeDefined()
     })
 
-    it('POST /match/start → should answer right', async () => {
-        console.log(currentQuestion)
-
+    it('should answer right', async () => {
         const res = await matchService.answerQuestion(currentQuestion.answerIndex)
-        // const res = await answerQuestion(server, token, )
 
-        console.log("BODYU>")
-        console.log(res.body)
         expect(res.body.isCorrect).toBeTruthy()
+    })
+
+    it('Should answer wrong', async () => {
+        const currentQuestion = (await matchService.getNextQuestion()).body
+        const res = await matchService.answerQuestion(1 == currentQuestion.answerIndex ? 1 : 3)
+
+        expect(res.body.isCorrect).toBeFalsy()
+    })
+
+
+    it('Should stop match', async () => {
+        // prepare
+        await matchService.startMatch()
+        await matchService.getNextQuestion()
+
+        const stopRes = await matchService.stopMatch()
+
+        const getMatchInfo = await matchService.getCurrentQuestion()
+
+        expect(stopRes.body.finalPrize).toBeDefined()
+        expect(getMatchInfo.body.message).toBeDefined()// error at get == really stopped
     })
 })
