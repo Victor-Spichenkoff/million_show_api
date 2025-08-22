@@ -1,18 +1,16 @@
 import * as request from 'supertest'
 
 export const matchServiceFactory = (server: any, token: string) => {
-    const startMatch = async () =>
+    const startMatch = async (force?: boolean) =>
         await request(server)
-            .post('/match/start')
+            .post(`/match/start`)
+            .query({ force: !!force })
             .set('Authorization', 'Bearer ' + token)
-            .expect(201)
-
 
     const getNextQuestion = async () =>
         await request(server) //a question
-            .get('/match/next?isEn=true')// only the last question on seed (all en)
+            .get('/match/next?isEn=true') // only the last question on seed (all en)
             .set('Authorization', 'Bearer ' + token)
-
 
     const answerQuestion = async (answerIndex: number) =>
         await request(server)
@@ -29,6 +27,30 @@ export const matchServiceFactory = (server: any, token: string) => {
             .get('/match/stop/')
             .set('Authorization', 'Bearer ' + token)
 
+    const getHalfHelp = async () =>
+        await request(server)
+            .get('/hint/half/')
+            .set('Authorization', 'Bearer ' + token)
 
-    return { startMatch, getNextQuestion, answerQuestion, stopMatch, getCurrentQuestion }
+    const getUniverHelp = async () =>
+        await request(server)
+            .get('/hint/universitary/')
+            .set('Authorization', 'Bearer ' + token)
+
+    const getSkipHelp = async () =>
+        await request(server)
+            .get('/hint/universitary/')
+            .set('Authorization', 'Bearer ' + token)
+
+
+    return {
+        startMatch,
+        getNextQuestion,
+        answerQuestion,
+        stopMatch,
+        getCurrentQuestion,
+        getHalfHelp,
+        getUniverHelp,
+        getSkipHelp
+    }
 }

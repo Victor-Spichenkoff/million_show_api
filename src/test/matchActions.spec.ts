@@ -5,7 +5,7 @@ configDotEnvFile()
 import { INestApplication } from '@nestjs/common'
 import { setupTestApp } from 'src/test/test-setup'
 import * as request from 'supertest'
-import { testAuthData } from 'src/test/services/auth'
+import {getAuthTokenTest, testAuthData} from 'src/test/services/auth'
 import { seed } from 'src/seeding/run'
 import { DataSource } from 'typeorm'
 import { Question } from 'models/question.model'
@@ -26,17 +26,7 @@ describe('Match actions [lose, correct, stop]', () => {
         const dataSource = app.get(DataSource)
         await seed(dataSource)
 
-        //create
-        await request(server)
-            .post('/auth/signup')
-            .send({ userName: testAuthData.userName, password: testAuthData.password })
-
-        const loginRes = await request(server)
-            .post('/auth/signin')
-            .send({ userName: testAuthData.userName, password: testAuthData.password })
-            .expect(201)
-
-        token = loginRes.body.access_token
+        token = await getAuthTokenTest(server)
 
         matchService = matchServiceFactory(server, token)
     })
@@ -70,8 +60,9 @@ describe('Match actions [lose, correct, stop]', () => {
     })
 
     it('Should answer wrong', async () => {
+        // don't create cause uses the previous
         const currentQuestion = (await matchService.getNextQuestion()).body
-        const res = await matchService.answerQuestion(1 == currentQuestion.answerIndex ? 1 : 3)
+        const res = await matchService.answerQuestion(1 == currentQuestion.answerIndex ? 3 : 1)
 
         expect(res.body.isCorrect).toBeFalsy()
     })
