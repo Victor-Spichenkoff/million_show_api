@@ -5,9 +5,10 @@ import { configureSwagger } from '../config/swaggerConfig'
 import { PipeValidationConfig } from 'config/validationConfig'
 import { ValidationPipe } from '@nestjs/common'
 import { CustomBadRequestFilter } from 'global/error400Filter'
-import {configDotEnvFile} from "config/dotenv";
+import {configDotEnvFile, Env} from "config/dotenv";
 
-// configDotEnvFile()//multi-file
+
+configDotEnvFile()//multi-file
 
 
 async function bootstrap() {
@@ -21,11 +22,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(PipeValidationConfig))
 
   configDotEnvFile()
+  console.log("ENV -> " + process.env.ENV_NAME)
 
-     console.log("DB_PATH_REAL: " + process.env.DB_PATH)
-     console.log("ENV_REAL: " + process.env.NODE_ENV)
+  console.log("MODE" + Env.isLocalProductionOrDevelopment())
   app.enableCors({
-    origin: process.env.NODE_ENV === 'development' ? '*' : [
+    origin: Env.isLocalProductionOrDevelopment()  ?  '*' : [
         "https://million-show.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],

@@ -83,7 +83,6 @@ describe('Match game', () => {
         let matchCount = 0
         let wrongCount = 0
         for (let matchCount = 0; matchCount < 50; matchCount++) {
-        // while (matchCount < 50) {
             await matchService.startMatch(true)
             currentQuestion = (await matchService.getNextQuestion()).body
             const hintRes = await matchService.getUniverHelp()
@@ -102,7 +101,6 @@ describe('Match game', () => {
             if(!answerRes.body.isCorrect)
                 wrongCount++
 
-            // matchCount++
         }
 
         expect(wrongCount).toBeLessThan(11) // 80% must be correct

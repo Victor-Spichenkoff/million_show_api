@@ -8,6 +8,7 @@ import { hashPassword } from '../../../helpers/crypto'
 import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../user/user.service'
 import * as bcrypt from 'bcrypt'
+import {Env} from "config/dotenv";
 
 @Injectable()
 export class AuthService {
@@ -40,9 +41,9 @@ export class AuthService {
         return {
             ...user,
             access_token: this.jwtService.sign(payload, {
-                expiresIn: process.env.NODE_ENV == "development" ? "30d" : "1d"
+                expiresIn: Env.isDev() ? "30d" : "1d"
             }),
-            expires_in: 60 * 60 * 24//frontend use it as seconds
+            expires_in: 60 * 60 * 24// frontend use it as seconds
         }
     }
 
