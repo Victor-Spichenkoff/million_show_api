@@ -1,3 +1,7 @@
+# FOR PRODUCTION
+- Delete history id: 114, 125; Points: 47
+
+
 # TO DO
 - Testar se está bom o questionIndex e relação com os correct no points
 

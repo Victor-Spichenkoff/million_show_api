@@ -22,9 +22,14 @@ export class PointsController {
     return this.pointsService.findOne(+id);
   }
 
+  // raw points by player
+  @Get('/player/:userId')
+  findAllByUser(@Param('userId') userId: string) {
+    return this.pointsService.findAllByUser(+userId);
+  }
 
-
-  @Get("/player/:playerId")
+  // stats
+  @Get("/player/:playerId/info")
   getPointsInfoForPlayer(@Param('playerId') playerId: string) {
     return this.pointsService.getPointsInfoForPlayer(+playerId)
   }

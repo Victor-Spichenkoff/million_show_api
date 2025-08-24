@@ -1,12 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as path from 'node:path';
+import {configDotEnvFile} from "config/dotenv";
 
-import {configDotenv} from "dotenv"
+configDotEnvFile()
 
-configDotenv()
-
+console.log("DB: " + process.env.DB_PATH)
 export const dbConfig: TypeOrmModuleOptions = {
-
   type: 'sqlite',
   database: process.env.DB_PATH,
   // database: path.join(__dirname, 'db', 'type_orm.sqlite'),

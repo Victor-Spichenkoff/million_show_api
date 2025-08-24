@@ -87,6 +87,10 @@ export class PointsService {
         return final
     }
 
+    async findAllByUser(userId: number) {
+        return await this.pointRepo.find({ where: { user: { id: userId } } })
+    }
+
     async getPointsInfoForPlayer(playerId: number) {
         if (!playerId) throw new BadRequestException('No such ID')
 
@@ -125,20 +129,18 @@ export class PointsService {
             .limit(1)
             .getRawOne()
 
-
         dbResponse.position = rankedUsers.findIndex((r) => r.userId === playerId) + 1
         dbResponse.bestMatchPoints = bestMatch.points
         dbResponse.bestMatchTime = bestMatch.totalTime
         return dbResponse
     }
 
-
     findOne(id: number) {
         return `This action returns a #${id} point`
     }
 
     update(id: number, updatePointDto: UpdatePointDto) {
-        return `This action updates a #${id} point`
+        return this.pointRepo.update(id, {...updatePointDto})
     }
 
     remove(id: number) {

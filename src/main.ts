@@ -21,10 +21,7 @@ async function bootstrap() {
   app.useGlobalFilters(new CustomBadRequestFilter())
   app.useGlobalPipes(new ValidationPipe(PipeValidationConfig))
 
-  configDotEnvFile()
-  console.log("ENV -> " + process.env.ENV_NAME)
 
-  console.log("MODE" + Env.isLocalProductionOrDevelopment())
   app.enableCors({
     origin: Env.isLocalProductionOrDevelopment()  ?  '*' : [
         "https://million-show.vercel.app"
@@ -35,6 +32,8 @@ async function bootstrap() {
   })
 
   await app.listen(port)
+  console.log("ENV -> " + process.env.ENV_NAME)
+  console.log("DB: " + process.env.DB_PATH)
   console.log("Rodando em: http://localhost:" + port + "/swagger")
 }
 

@@ -5,7 +5,8 @@ export const configDotEnvFile = () => {
     const env = process.env.NODE_ENV || 'default'
 
     const fileMap = {
-        development: '.env.development',
+        // development: '.env.development',
+        development: '.env',
         test: '.env.test',
         localProduction: '.env.localProduction',
         default: '.env',
