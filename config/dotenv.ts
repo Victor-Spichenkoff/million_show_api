@@ -18,9 +18,12 @@ export const configDotEnvFile = () => {
     configDotenv({ path: fullPath, override: true })
 }
 
+
 export const Env = {
     isLocalProductionOrDevelopment: () =>
         ["localProduction", "development"].includes(process.env.NODE_ENV ?? ""),
 
     isDev: () => process.env.NODE_ENV == "development",
+
+    isSeedModeOn: () => process.env.IS_SEED == "true",
 }

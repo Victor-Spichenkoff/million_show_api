@@ -1,5 +1,11 @@
 import axios from 'axios'
 import { getRandomIntInclusive } from '../../helpers/numeric'
+import {configDotEnvFile, Env} from "../../config/dotenv";
+
+configDotEnvFile()
+
+if(!Env.isSeedModeOn())
+    throw new Error("[SEED USER] SEED MODE IS OFF")
 
 const baseUrl = 'http://localhost:2006'
 
@@ -19,7 +25,7 @@ const names = [
     'max_33',
 ]
 
-const create = true
+const create = false
 
 async function createAndPlay(name: string) {
     try {
@@ -58,8 +64,15 @@ async function createAndPlay(name: string) {
                     },
                 )
             } catch (e) {
-                console.log('ERROR: ' + e.response?.data.message)
+                console.log('ERROR match/start: ' + e.response?.data.message)
             }
+
+            // in case it don't auto-create
+
+            try {
+                 await axios.get(`${baseUrl}/match/${i}`)
+
+            } catch{}
 
             // one round
             while (true) {
