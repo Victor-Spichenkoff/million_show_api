@@ -16,6 +16,7 @@ import {PointsService} from "../points/points.service";
 import {HistoricQuestion} from "../../../models/historicQuestion.model";
 import {HistoricService} from "../historic/historic.service";
 import {HistoricQuestionService} from "../historic-question/historic-question.service";
+import {Env} from "config/dotenv";
 
 @Injectable()
 export class MatchService {
@@ -229,7 +230,7 @@ export class MatchService {
 
         const newMatch = new Match()
         newMatch.user = user
-        if(process.env.IS_SEED=="true") {
+        if(Env.isSeedModeOn()) {
             console.log("SEED DATA CHANGE")
             newMatch.startDate = seedRandomDate()
         }

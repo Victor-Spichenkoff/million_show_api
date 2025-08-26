@@ -12,6 +12,8 @@ import {Question} from "../../../models/question.model";
 import {Match} from "../../../models/match.model";
 import {Prizes} from "../../../types/prizes";
 import {States} from "../../../types/states";
+import {Env} from "config/dotenv";
+import {seedRandomDate} from "helpers/time";
 
 @Injectable()
 export class HistoricService {
@@ -127,12 +129,13 @@ export class HistoricService {
         {
           points,
           finalPrize,
-          finishDate: Number(new Date()),
+          finishDate: Env.isSeedModeOn() ? seedRandomDate(true): Number(new Date()),
           finalState
         }
     )
     return true
   }
+
 
   create(createHistoricDto: CreateHistoricDto) {
     return 'This action adds a new historic';

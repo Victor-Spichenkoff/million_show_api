@@ -1,11 +1,13 @@
 import axios from 'axios'
 import { getRandomIntInclusive } from '../../helpers/numeric'
-import {configDotEnvFile, Env} from "../../config/dotenv";
+import { configDotEnvFile, Env } from '../../config/dotenv'
+import process from 'node:process'
 
 configDotEnvFile()
-
-if(!Env.isSeedModeOn())
-    throw new Error("[SEED USER] SEED MODE IS OFF")
+if (!Env.isSeedModeOn()) {
+    console.log('[SEED] SEED MODE IS OFF')
+    process.exit(0)
+}
 
 const baseUrl = 'http://localhost:2006'
 
@@ -14,7 +16,10 @@ const names = [
     'maria',
     'john',
     'a',
-    'bs',
+    'BS',
+    'BS',
+    'BS',
+    'BS',
     'l',
     'kadshdndsnj',
     'player_123',
@@ -25,7 +30,7 @@ const names = [
     'max_33',
 ]
 
-const create = false
+const create = true
 
 async function createAndPlay(name: string) {
     try {
@@ -70,9 +75,8 @@ async function createAndPlay(name: string) {
             // in case it don't auto-create
 
             try {
-                 await axios.get(`${baseUrl}/match/${i}`)
-
-            } catch{}
+                await axios.get(`${baseUrl}/match/${i}`)
+            } catch {}
 
             // one round
             while (true) {
@@ -151,13 +155,16 @@ async function createAndPlay(name: string) {
     }
 }
 
-// Cria e joga com 10 usuários
 ;(async () => {
-    for (let name of names) {
-        await createAndPlay(name)
-    }
-    // await createAndPlay("max_33")
+    // FAST:
+    await Promise.all(names.map((name) => createAndPlay(name)))
+    // Better LOGGING:
+    // for (let name of names) {
+    //     await createAndPlay(name)
+    // }
 })()
+
+// REFERENCES:
 
 //start:
 // "id": 88,

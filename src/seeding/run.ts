@@ -2,6 +2,15 @@ import { dbConfig } from '../../config/dbConfig'
 import { Question } from '../../models/question.model'
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { SeedQuestions } from './seedQuestions'
+import {configDotEnvFile, Env} from "../../config/dotenv";
+import * as process from "node:process";
+
+configDotEnvFile()
+if(!Env.isSeedModeOn()) {
+    console.log("[SEED] SEED MODE IS OFF")
+    process.exit(0)
+}
+
 
 export const seed = async (dataSource: DataSource) => {
     if(!dataSource.isInitialized)
