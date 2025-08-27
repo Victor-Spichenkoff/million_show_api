@@ -1,170 +1,166 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateHistoricDto } from './dto/create-historic.dto';
-import { UpdateHistoricDto } from './dto/update-historic.dto';
-import { Historic } from 'models/historic.model';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { HomeInfos } from 'types/home';
-import {Point} from "../../../models/points.model";
-import {not} from "rxjs/internal/util/not";
-import {HistoricQuestion} from "../../../models/historicQuestion.model";
-import {Question} from "../../../models/question.model";
-import {Match} from "../../../models/match.model";
-import {Prizes} from "../../../types/prizes";
-import {States} from "../../../types/states";
-import {Env} from "config/dotenv";
-import {seedRandomDate} from "helpers/time";
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { CreateHistoricDto } from './dto/create-historic.dto'
+import { UpdateHistoricDto } from './dto/update-historic.dto'
+import { Historic } from 'models/historic.model'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { HomeInfos } from 'types/home'
+import { Point } from '../../../models/points.model'
+import { not } from 'rxjs/internal/util/not'
+import { HistoricQuestion } from '../../../models/historicQuestion.model'
+import { Question } from '../../../models/question.model'
+import { Match } from '../../../models/match.model'
+import { Prizes } from '../../../types/prizes'
+import { States } from '../../../types/states'
+import { Env } from 'config/dotenv'
+import { seedRandomDate } from 'helpers/time'
 
 @Injectable()
 export class HistoricService {
-  constructor(
-    @InjectRepository(Historic) private readonly _historicRepo: Repository<Historic>,
-    @InjectRepository(Point) private readonly _pointsRepo: Repository<Point>
-  ) { }
+    constructor(
+        @InjectRepository(Historic) private readonly _historicRepo: Repository<Historic>,
+        @InjectRepository(Point) private readonly _pointsRepo: Repository<Point>,
+    ) {}
 
+    async getCurrentQuestion(historicId: number): Promise<Question> {
+        const currentHistoric = await this._historicRepo.findOne({
+            where: { id: historicId },
+            relations: ['historicQuestions', 'historicQuestions.question'],
+            order: { historicQuestions: { orderIndex: 'ASC' } },
+        })
 
-  async getCurrentQuestion(historicId: number): Promise<Question> {
-    const currentHistoric = await this._historicRepo.findOne({
-      where: { id: historicId},
-      relations: ['historicQuestions', 'historicQuestions.question'],
-      order: { historicQuestions: { orderIndex: 'ASC' } },
-    })
+        if (!currentHistoric) throw new BadRequestException("There's no question in history")
 
-    if(!currentHistoric)
-      throw new BadRequestException("There's no question in history")
-
-
-    return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1].question
-  }
-
-
-  async getCurrentQuestionByUserId(userId: number): Promise<Question> {
-    const currentHistoric = await this._historicRepo.findOne({
-      where: { user: {id:  userId }, match: { state: "playing" }},
-      relations: ['historicQuestions', 'historicQuestions.question'],
-      order: { historicQuestions: { orderIndex: 'ASC' } },
-    })
-
-    if(!currentHistoric)
-      throw new BadRequestException("There's no question in history")
-
-
-    return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1]?.question
-  }
-
-
-  async getHomeInfos(userId: number): Promise<HomeInfos> {
-    const historics = await this._historicRepo.find({
-      where: { user: { id: userId } },
-      relations: { match: true },
-      order: { finishDate: "DESC" }
-    })
-
-    if(historics.length == 0)
-      return {
-        points: "Not Started",
-        accumulatedPrizes: null,
-        correctAnswers: "0",
-        leaderBoardPosition: null,
-        matchId: null,
-        recentHistoric: null
-      }
-
-
-    const rankedUsers = await this._pointsRepo
-        .createQueryBuilder("point")
-        .select("point.userId", "userId")
-        .addSelect("SUM(point.points)", "totalPoints")
-        .groupBy("point.userId")
-        .orderBy("totalPoints", "DESC")
-        .getRawMany()
-
-    const leaderBoardPosition = rankedUsers.findIndex(r => r.userId === userId) + 1;
-
-    const accumulatedPrizes = historics.map(h => h.finalPrize).reduce((total, current) => total + current)
-    const match = historics.map(h => h.match)
-
-    let correctAnswers = 0
-    match.forEach(m => {
-      if(m.state == "won")
-        correctAnswers += m.questionIndex
-      else
-        correctAnswers += m.questionIndex - 1
-    })
-
-
-    return {
-      points: rankedUsers[leaderBoardPosition-1].totalPoints,
-      accumulatedPrizes,
-      correctAnswers,
-      leaderBoardPosition,
-      matchId: historics.find(h => h.match.state == "playing")?.match.id ?? null,
-      recentHistoric: historics.filter(h=> h.finalState != "playing" && h.finalState != null).slice(0, 4)
+        return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1]
+            .question
     }
-  }
 
+    async getCurrentQuestionByUserId(userId: number): Promise<Question> {
+        const currentHistoric = await this._historicRepo.findOne({
+            where: { user: { id: userId }, match: { state: 'playing' } },
+            relations: ['historicQuestions', 'historicQuestions.question'],
+            order: { historicQuestions: { orderIndex: 'ASC' } },
+        })
 
-  async getFullHistoricByUser(userId: number): Promise<Historic[]> {
-    return await this._historicRepo.find({
-      where: {user: { id: userId }},
-      relations: { match: true },
-      order: { finishDate: "DESC" }
-    })
-  }
+        if (!currentHistoric) throw new BadRequestException("There's no question in history")
 
+        return currentHistoric.historicQuestions[currentHistoric?.historicQuestions.length - 1]
+            ?.question
+    }
 
-  async getLastMatch(userId: number) {
-    return (await this._historicRepo.find({
-      where: { user: { id: userId } },
-      take: 1,
-      order: { id: "DESC" },
-      relations: { match: true }
-    }))[0]
-  }
+    async getHomeInfos(userId: number): Promise<HomeInfos> {
+        const historics = await this._historicRepo.find({
+            where: { user: { id: userId } },
+            relations: { match: true },
+            order: { finishDate: 'DESC' },
+        })
 
+        if (historics.length == 0)
+            return {
+                points: 'Not Started',
+                accumulatedPrizes: null,
+                correctAnswers: '0',
+                leaderBoardPosition: null,
+                matchId: null,
+                recentHistoric: null,
+            }
 
-  async updateOnMatchAction(matchId: number, points: number, finalPrize: number, finalState: States) {
-    await this._historicRepo.update(
-        { match: { id: matchId } },//where
-        {
-          points,
-          finalPrize,
-          finishDate: Env.isSeedModeOn() ? seedRandomDate(true): Number(new Date()),
-          finalState
+        const rankedUsers = await this._pointsRepo
+            .createQueryBuilder('point')
+            .select('point.userId', 'userId')
+            .addSelect('SUM(point.points)', 'totalPoints')
+            .groupBy('point.userId')
+            .orderBy('totalPoints', 'DESC')
+            .getRawMany()
+
+        const leaderBoardPosition = rankedUsers.findIndex((r) => r.userId === userId) + 1
+
+        const accumulatedPrizes = historics
+            .map((h) => h.finalPrize)
+            .reduce((total, current) => total + current)
+        const match = historics.map((h) => h.match)
+
+        let correctAnswers = 0
+        match.forEach((m) => {
+            if (m.state == 'won') correctAnswers += m.questionIndex
+            else correctAnswers += m.questionIndex - 1
+        })
+
+        return {
+            points: rankedUsers[leaderBoardPosition - 1].totalPoints,
+            accumulatedPrizes,
+            correctAnswers,
+            leaderBoardPosition,
+            matchId: historics.find((h) => h.match.state == 'playing')?.match.id ?? null,
+            recentHistoric: historics
+                .filter((h) => h.finalState != 'playing' && h.finalState != null)
+                .slice(0, 4),
         }
-    )
-    return true
-  }
+    }
 
+    async getFullHistoricByUser(userId: number): Promise<Historic[]> {
+        return await this._historicRepo.find({
+            where: { user: { id: userId } },
+            relations: { match: true },
+            order: { finishDate: 'DESC' },
+        })
+    }
 
-  create(createHistoricDto: CreateHistoricDto) {
-    return 'This action adds a new historic';
-  }
+    async getLastMatch(userId: number) {
+        return (
+            await this._historicRepo.find({
+                where: { user: { id: userId } },
+                take: 1,
+                order: { id: 'DESC' },
+                relations: { match: true },
+            })
+        )[0]
+    }
 
+    async updateOnMatchAction(
+        matchId: number,
+        points: number,
+        finalPrize: number,
+        finalState: States,
+    ) {
+        await this._historicRepo.update(
+            { match: { id: matchId } }, //where
+            {
+                points,
+                finalPrize,
+                finishDate: Env.isSeedModeOn() ? seedRandomDate(true) : Number(new Date()),
+                finalState,
+            },
+        )
+        return true
+    }
 
-  findAll() {
-    return this._historicRepo.find({ relations: { questions: true } })
-  }
+    create(createHistoricDto: CreateHistoricDto) {
+        return 'This action adds a new historic'
+    }
 
-  findOne(id: number) {
-    return this._historicRepo.findOne({
-      where: { id },
-      relations: { questions: true }
-    })
-  }
+    findAll() {
+        return this._historicRepo.find({ relations: { questions: true } })
+    }
 
-  update(id: number, updateHistoricDto: UpdateHistoricDto) {
-    return `This action updates a #${id} historic`;
-  }
+    findOne(id: number) {
+        return this._historicRepo.findOne({
+            where: { id },
+            relations: { questions: true },
+        })
+    }
 
-  async remove(id: number) {
-    return await this._historicRepo.delete(id)
-  }
+    update(id: number, updateHistoricDto: UpdateHistoricDto) {
+        return `This action updates a #${id} historic`
+    }
 
-  async removeAll(historics: Historic[]) {
-    for (let h of historics)
-      await this._historicRepo.delete(h.id)
+    async remove(id: number) {
+        return await this._historicRepo.delete(id)
+    }
 
-    return true
-  }
+    async removeAll(historics: Historic[]) {
+        for (let h of historics) await this._historicRepo.delete(h.id)
+
+        return true
+    }
 }

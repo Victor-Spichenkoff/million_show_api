@@ -20,6 +20,15 @@ const names = [
     'BS',
     'BS',
     'BS',
+    'BS','BS',
+    'BS',
+    'BS',
+    'BS',
+    'BS','BS',
+    'BS',
+    'BS',
+    'BS',
+    'BS',
     'l',
     'kadshdndsnj',
     'player_123',
@@ -158,7 +167,7 @@ async function createAndPlay(name: string) {
 ;(async () => {
     // FAST:
     await Promise.all(names.map((name) => createAndPlay(name)))
-    // Better LOGGING:
+    // //Better LOGGING:
     // for (let name of names) {
     //     await createAndPlay(name)
     // }

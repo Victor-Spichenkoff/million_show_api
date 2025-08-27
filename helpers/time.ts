@@ -7,7 +7,7 @@ export const zeroFill = (num: number, size = 2) =>  ('0' + num).slice(-size)
 
 /*
 * 10 min to 5 days
-* */
+* */    
 export const seedRandomDate = (isMoreThanNow?: boolean) => {
     const now = Date.now()
     const tenMinutes = 10 * 60 * 1000
