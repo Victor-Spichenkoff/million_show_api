@@ -9,6 +9,7 @@ export const configDotEnvFile = () => {
         development: '.env',
         test: '.env.test',
         localProduction: '.env.localProduction',
+        production: '.env.production',
         default: '.env',
     }
 
