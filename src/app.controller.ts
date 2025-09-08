@@ -5,11 +5,11 @@ import { Controller, Get } from '@nestjs/common'
 export class AppController {
     @Get("/teste")
     test() {
-        return "Funcionando "
+        return "Funcionando"
     }
     @Get("/testes")
     tests() {
-        return "Funcionando "
+        return "Funcionando"
     }
 
     @Get()

@@ -1,5 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, } from '@nestjs/common'
-import { SignInDto } from './dto/signin.dto'
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { SignupDto } from './dto/signup.dto'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -8,17 +7,18 @@ import { hashPassword } from '../../../helpers/crypto'
 import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../user/user.service'
 import * as bcrypt from 'bcrypt'
-import {Env} from "config/dotenv";
+import { Env } from 'config/dotenv'
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User) private readonly _userRepo: Repository<User>,
         private readonly jwtService: JwtService,
-        private readonly userService: UserService) { }
+        private readonly userService: UserService,
+    ) {}
 
     async create(createAuthDto: SignupDto) {
-        if (!createAuthDto.password) throw new BadRequestException("Inform a password")
+        if (!createAuthDto.password) throw new BadRequestException('Inform a password')
 
         createAuthDto.password = await hashPassword(createAuthDto.password)
 
@@ -27,11 +27,13 @@ export class AuthService {
             return await this.login(finalUser)
             // return finalUser.userName//don't use it, I guess
         } catch (error) {
-            if (error.code === "SQLITE_CONSTRAINT" || error.code === "23505")
-                throw new BadRequestException(`User with name '${createAuthDto.userName}' already exists`)
+            if (error.code === 'SQLITE_CONSTRAINT' || error.code === '23505')
+                throw new BadRequestException(
+                    `User with name '${createAuthDto.userName}' already exists`,
+                )
 
             console.log(error)
-            throw new InternalServerErrorException("Something went wrong")
+            throw new InternalServerErrorException('Something went wrong')
         }
     }
 
@@ -41,12 +43,11 @@ export class AuthService {
         return {
             ...user,
             access_token: this.jwtService.sign(payload, {
-                expiresIn: Env.isDev() ? "30d" : "1d"
+                expiresIn: Env.isDev() ? '30d' : '1d',
             }),
-            expires_in: 60 * 60 * 24// frontend use it as seconds
+            expires_in: 60 * 60 * 24, // frontend use it as seconds
         }
     }
-
 
     async validateUser(userName: string, password: string): Promise<any> {
         const user = await this.userService.finUserByUserName(userName)
@@ -57,8 +58,7 @@ export class AuthService {
         throw new BadRequestException('Invalid Username or Password')
     }
 
-
     testLogin() {
-      return "Logged In"
+        return 'Logged In'
     }
 }
