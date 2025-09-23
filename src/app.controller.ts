@@ -1,10 +1,11 @@
 import { Controller, Get } from '@nestjs/common'
+import {Sleep} from "helpers/time";
 
 
 @Controller('')
 export class AppController {
     @Get("/teste")
-    test() {
+    async test() {
         return "Funcionando"
     }
     @Get("/testes")

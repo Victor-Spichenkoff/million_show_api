@@ -6,6 +6,7 @@ import {JwtAuthGuard} from "./guards/jwt-auth.guard";
 import {ApiBearerAuth} from "@nestjs/swagger";
 import {Roles} from "../../../decorators/roles.decorator";
 import {RolesGuard} from "./guards/roles.guard";
+import {Sleep} from "helpers/time";
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -36,6 +37,6 @@ export class AuthController {
     @Post('/signin')
     async update(@Body() body: SignInDto) {
         const user = await this.authService.validateUser(body.userName, body.password);
-        return this.authService.login(user);
+        return await this.authService.login(user);
     }
 }
