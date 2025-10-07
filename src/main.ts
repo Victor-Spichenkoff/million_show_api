@@ -24,7 +24,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: Env.isLocalProductionOrDevelopment()  ?  '*' : [
-        "https://million-show.vercel.app", "https://server-maintenance-page.vercel.app"
+        "https://million-show.vercel.app", "https://server-maintenance-page.vercel.app", "https://victor-spichenkoff.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
