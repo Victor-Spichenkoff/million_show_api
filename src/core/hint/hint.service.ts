@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
-import { Question } from 'models/question.model';
 import { Repository } from 'typeorm';
 import { Match } from 'models/match.model';
-import { User } from 'models/user.model';
 import { validateMatch } from 'helpers/matchHepers';
 import { HistoricService } from '../historic/historic.service';
 import { getRandomIntInclusive } from 'helpers/numeric';
@@ -23,7 +21,7 @@ export class HintService {
             hasSkip: true, isWaiting: true
         })
 
-        if (match.questionIndex >= 15)
+        if (match.questionIndex >= 16)
             throw new BadRequestException("You can't skip the Million Question")
 
 
@@ -40,7 +38,7 @@ export class HintService {
         const successProbability = getRandomIntInclusive(1, 100)
         const match = await this.getCurrentMatch(userId)
 
-        if (match.questionIndex >= 15)
+        if (match.questionIndex >= 16)
             throw new BadRequestException("You can't use it in the Million Question")
         if (match.hintState != "none" && match.hintState != "univertitary")
             throw new BadRequestException("Question already hinted")
@@ -67,7 +65,7 @@ export class HintService {
     async halfHalf(userId: number) {
         const match = await this.getCurrentMatch(userId)
 
-        if (match.questionIndex >= 15)
+        if (match.questionIndex >= 16)
             throw new BadRequestException("You can't use it in the Million Question")
         if (match.hintState != "none" && match.hintState != "half")
             throw new BadRequestException("Question already hinted")
@@ -82,6 +80,7 @@ export class HintService {
         } else {
             match.hintState = "none"
         }
+
 
         await this._matchRepo.update(match.id, match)
         return getHalfQuestion(question)
